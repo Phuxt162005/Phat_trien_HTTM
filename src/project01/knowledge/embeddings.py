@@ -90,10 +90,19 @@ def reciprocal_rank_fusion(
             if not key or key in seen:
                 continue
             seen.add(key)
-            entry = fused.setdefault(key, {**item, "id": key, "rrf_score": 0.0, "retrieval_ranks": []})
+            entry = fused.setdefault(key, {
+                **item, "id": key, "rrf_score": 0.0,
+                "retrieval_ranks": [], "retrieval_methods": [],
+            })
             entry["rrf_score"] += 1.0 / (k + rank)
             entry["retrieval_ranks"].append(rank)
-            for field in ("text", "title", "url", "page_start", "page_end", "source", "entity", "related"):
+            method = item.get("retrieval_method")
+            if method and method not in entry["retrieval_methods"]:
+                entry["retrieval_methods"].append(method)
+            for field in (
+                "text", "title", "url", "page", "page_start", "page_end",
+                "document_id", "chunk_id", "source", "sources", "entity", "related",
+            ):
                 if entry.get(field) in (None, "", [], {}) and item.get(field) not in (None, "", [], {}):
                     entry[field] = item[field]
     return sorted(fused.values(), key=lambda item: item["rrf_score"], reverse=True)[:limit]

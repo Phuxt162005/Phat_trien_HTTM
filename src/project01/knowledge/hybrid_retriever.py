@@ -49,6 +49,11 @@ class HybridRetriever:
                 "retrieval_method": "graph",
                 "entity": entity,
                 "sources": evidence_items,
+                "source": next((ev.get("source") for ev in evidence_items if ev.get("source")), None),
+                "title": next((ev.get("title") for ev in evidence_items if ev.get("title")), None),
+                "url": next((ev.get("url") for ev in evidence_items if ev.get("url")), None),
+                "page_start": next((ev.get("page_start") for ev in evidence_items if ev.get("page_start")), None),
+                "page_end": next((ev.get("page_end") for ev in evidence_items if ev.get("page_end")), None),
             })
 
         fused = reciprocal_rank_fusion(

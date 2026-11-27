@@ -102,3 +102,18 @@ def test_hybrid_retriever_validates_query_and_limit():
         retriever.retrieve(" ")
     with pytest.raises(ValueError):
         retriever.retrieve("diabetes", limit=0)
+
+
+def test_hybrid_fusion_preserves_graph_citations_for_vector_match():
+    result = reciprocal_rank_fusion([
+        [{"id": "chunk-1", "text": "Vector text", "retrieval_method": "vector"}],
+        [{
+            "id": "chunk-1", "title": "Guideline", "url": "https://example.org",
+            "sources": [{"title": "Guideline", "page_start": 3}],
+            "retrieval_method": "graph",
+        }],
+    ])
+    assert result[0]["title"] == "Guideline"
+    assert result[0]["url"] == "https://example.org"
+    assert result[0]["sources"][0]["page_start"] == 3
+    assert result[0]["retrieval_methods"] == ["vector", "graph"]
