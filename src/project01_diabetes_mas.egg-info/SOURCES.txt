@@ -10,6 +10,12 @@ src/project01/config/__init__.py
 src/project01/config/settings.py
 src/project01/data/__init__.py
 src/project01/data/loader.py
+src/project01/ml/__init__.py
+src/project01/ml/deep_learning.py
+src/project01/ml/evaluation.py
+src/project01/ml/models.py
+src/project01/ml/pipeline.py
+src/project01/ml/preprocessing.py
 src/project01_diabetes_mas.egg-info/PKG-INFO
 src/project01_diabetes_mas.egg-info/SOURCES.txt
 src/project01_diabetes_mas.egg-info/dependency_links.txt
@@ -17,5 +23,7 @@ src/project01_diabetes_mas.egg-info/requires.txt
 src/project01_diabetes_mas.egg-info/top_level.txt
 tests/test_agent_contracts.py
 tests/test_dataset_loader.py
+tests/test_ml_deep_learning.py
+tests/test_ml_pipeline.py
 tests/test_patient_data_agent.py
 tests/test_settings.py
