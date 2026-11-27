@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from scripts.audit_vinmec_sources import MetadataParser, catalog_urls
+from project01.knowledge.source_audit import MetadataParser, catalog_urls
 
 
 def test_catalog_urls_extracts_unique_urls_and_metadata():
