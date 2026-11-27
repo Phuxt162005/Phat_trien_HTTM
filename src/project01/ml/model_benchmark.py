@@ -13,6 +13,31 @@ from .models import _class_counts, _random_oversample
 from .preprocessing import prepare_dataset
 
 
+def apply_class_score_multiplier(probabilities, classes, target_class, factor):
+    """Multiply one class score, then keep argmax competition across all classes."""
+    probabilities = np.asarray(probabilities, dtype=float)
+    classes = list(classes)
+    if probabilities.ndim != 2 or probabilities.shape[1] != len(classes):
+        raise ValueError("Kích thước xác suất không khớp danh sách classes.")
+    if not np.isfinite(probabilities).all() or (probabilities < 0).any():
+        raise ValueError("Ma trận xác suất chứa giá trị không hợp lệ.")
+    if not np.isfinite(factor) or factor < 1.0:
+        raise ValueError("Hệ số điều chỉnh phải hữu hạn và >= 1.")
+    if target_class not in classes:
+        raise ValueError(f"Không tìm thấy lớp {target_class!r} trong classes.")
+    adjusted = probabilities.copy()
+    adjusted[:, classes.index(target_class)] *= float(factor)
+    return np.asarray(classes)[np.argmax(adjusted, axis=1)]
+
+
+def predict_with_class_score_multiplier(model, X, target_class, factor):
+    """Predict with the stored model and a validation-selected class multiplier."""
+    probabilities = model.predict_proba(X)
+    return apply_class_score_multiplier(
+        probabilities, model.classes_, target_class, factor
+    )
+
+
 def _dense(values):
     return values.toarray() if hasattr(values, "toarray") else np.asarray(values)
 
