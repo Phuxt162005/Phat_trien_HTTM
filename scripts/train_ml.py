@@ -6,7 +6,7 @@ from pathlib import Path
 
 from project01.config.settings import ARTIFACT_DIR, CONFIG_PATH, DATA_DIR
 from project01.data import load_dataset, load_dataset_configs
-from project01.ml import run_experiment
+from project01.agents.ml_agents import MLCoordinatorAgent
 
 
 def main() -> int:
@@ -33,14 +33,22 @@ def main() -> int:
             )
         print(f"\n=== Training {name} ===")
         frame = load_dataset(config, args.data_dir)
-        result = run_experiment(
+        coordinator = MLCoordinatorAgent(rf_estimators=args.rf_estimators)
+        result = coordinator.run(
             frame, config, artifact_dir=args.artifact_dir,
-            rf_estimators=args.rf_estimators,
             include_deep_learning=args.include_deep_learning,
         )
+        if result.status != "success":
+            raise SystemExit(
+                f"ML Agent orchestration thất bại cho {name}: "
+                + "; ".join(result.errors)
+            )
         summary[name] = {
-            "profile": result["profile"],
-            "metrics": result["metrics"],
+            "profile": result.data["profile"],
+            "metrics": result.data["metrics"],
+            "agent_log": result.data["agent_log"],
+            "message_log": result.data["message_log"],
+            "safety_review": result.data["safety_review"],
         }
         print(json.dumps(summary[name], ensure_ascii=False, indent=2))
 
