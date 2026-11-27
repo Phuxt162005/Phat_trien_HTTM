@@ -8,7 +8,7 @@ Module này cung cấp kết nối Neo4j, khởi tạo schema idempotent, truy v
 
 ## Cấu hình
 
-Sao chép .env.example thành .env, khai báo NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD và NEO4J_DATABASE (mặc định neo4j).
+Sao chép `.env.example` thành `.env` ở thư mục gốc repository. `Neo4jSettings` tự nạp file này khi module được import. Điền `NEO4J_URI` bằng Bolt URI trong Connect panel của Aura, `NEO4J_USERNAME` (thường là `neo4j`), `NEO4J_PASSWORD` của instance và `NEO4J_DATABASE` (thường là `neo4j`). Instance ID không phải username hoặc database name. Không commit `.env`.
 
 Cài dependency:
 
