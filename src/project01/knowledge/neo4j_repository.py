@@ -153,15 +153,15 @@ class Neo4jGraphRepository:
                node.chunk_index AS chunk_index,
                properties(node).page_start AS page_start,
                properties(node).page_end AS page_end,
-               doc.id AS document_id,
-               doc.title AS title,
-               doc.url AS url,
+               coalesce(doc.id, doc.doc_id) AS document_id,
+               coalesce(doc.title, doc.label, doc.question) AS title,
+               coalesce(doc.url, doc.source_url) AS url,
                score AS score,
-               CASE WHEN source IS NULL THEN null ELSE {
-                   name: coalesce(source.name, source.source_name),
-                   publisher: source.publisher,
-                   license: source.license,
-                   url: coalesce(source.url, source.source_url)
+               CASE WHEN source IS NULL AND doc.source_name IS NULL AND doc.publisher IS NULL THEN null ELSE {
+                   name: coalesce(source.name, source.source_name, doc.source_name),
+                   publisher: coalesce(source.publisher, doc.publisher),
+                   license: coalesce(source.license, doc.license),
+                   url: coalesce(source.url, source.source_url, doc.url, doc.source_url)
                } END AS source
         ORDER BY score DESC
         LIMIT $limit
@@ -188,9 +188,9 @@ class Neo4jGraphRepository:
            node.chunk_index AS chunk_index,
            properties(node).page_start AS page_start,
            properties(node).page_end AS page_end,
-           doc.id AS document_id,
-           doc.title AS title,
-           doc.url AS url,
+           coalesce(doc.id, doc.doc_id) AS document_id,
+           coalesce(doc.title, doc.label, doc.question) AS title,
+           coalesce(doc.url, doc.source_url) AS url,
            score AS score,
            CASE WHEN source IS NULL THEN null ELSE {
                name: coalesce(source.name, source.source_name),
