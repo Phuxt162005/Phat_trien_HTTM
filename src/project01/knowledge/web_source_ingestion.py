@@ -104,7 +104,7 @@ def extract_article(html: str) -> dict[str, str | None]:
         "appointment", "booking", "consult", "contact-form", "tag-list",
         "keyword", "promotion", "advertisement",
     )
-    for element in list(main.find_all(True)):
+    for element in reversed(list(main.find_all(True))):
         marker = " ".join([
             str(element.get("id") or ""),
             " ".join(str(value) for value in (element.get("class") or [])),
