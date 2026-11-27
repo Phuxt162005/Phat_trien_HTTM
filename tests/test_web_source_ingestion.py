@@ -127,3 +127,42 @@ def test_import_rejects_redirected_category_or_missing_heading(tmp_path, monkeyp
     )
     assert report["status_counts"] == {"invalid_or_insufficient_article": 1}
     assert not list((tmp_path / "documents").glob("VIN-002-*/content.md"))
+
+
+def test_extract_article_removes_in_article_promotions_and_related_links():
+    html = """
+    <html><head><title>Diabetes</title></head><body>
+    <article>
+      <h1>Tiểu đường type 2</h1>
+      <p>Đái tháo đường type 2 là bệnh rối loạn chuyển hóa glucose.</p>
+      <p>Biến chứng có thể ảnh hưởng đến tim, thận và thần kinh.</p>
+      <p>TẢI ĐÂY</p>
+      <p>Tải và đặt lịch khám tự động trên ứng dụng My Vinmec để quản lý lịch khám.</p>
+      <div class="related-articles">
+        <h2>Bài viết liên quan</h2>
+        <a href="/vie/other">Bài viết về chăm sóc sức khỏe</a>
+      </div>
+      <p>Để lại thông tin tư vấn, chúng tôi sẽ liên hệ với bạn.</p>
+    </article>
+    </body></html>
+    """
+    result = extract_article(html)
+    content = result["content"]
+
+    assert "Đái tháo đường type 2 là bệnh rối loạn chuyển hóa glucose." in content
+    assert "Biến chứng có thể ảnh hưởng đến tim, thận và thần kinh." in content
+    assert "TẢI ĐÂY" not in content
+    assert "My Vinmec" not in content
+    assert "Bài viết liên quan" not in content
+    assert "chúng tôi sẽ liên hệ với bạn" not in content
+
+
+def test_extract_article_normalizes_whitespace():
+    html = """
+    <html><body><article>
+      <h1>Tiểu đường</h1>
+      <p>Glucose     huyết     tăng.</p>
+    </article></body></html>
+    """
+    result = extract_article(html)
+    assert "Glucose huyết tăng." in result["content"]
