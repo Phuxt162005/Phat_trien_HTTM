@@ -70,6 +70,12 @@ def test_hybrid_retriever_calls_vector_and_graph_and_returns_fusion():
             assert len(embedding) == 4
             return [{"id": "chunk-1", "text": "vector evidence"}]
 
+        def fulltext_search_chunks(self, query, limit):
+            return [{
+                "id": "chunk-1", "text": "keyword evidence",
+                "title": "Guideline", "url": "https://example.org",
+            }]
+
         def search(self, query, limit):
             return [{
                 "entity": {"id": "disease-1", "name": "Diabetes"},
@@ -81,8 +87,11 @@ def test_hybrid_retriever_calls_vector_and_graph_and_returns_fusion():
     )
     result = HybridRetriever(Repository(), embedder).retrieve("diabetes")
     assert result["retrieval"]["vector_candidates"] == 1
+    assert result["retrieval"]["keyword_candidates"] == 1
     assert result["retrieval"]["graph_candidates"] == 1
+    assert result["retrieval"]["retrieval_channels"] == ["vector", "keyword", "graph"]
     assert result["results"][0]["id"] == "chunk-1"
+    assert result["results"][0]["retrieval_methods"] == ["vector", "keyword", "graph"]
     assert result["retrieval"]["fusion"] == "reciprocal_rank_fusion"
 
 
