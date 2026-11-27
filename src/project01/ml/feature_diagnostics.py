@@ -89,6 +89,75 @@ def _categorical_class_profiles(frame: pd.DataFrame, target: pd.Series) -> dict[
     return profiles
 
 
+
+DIABETES04_ORDINAL_FEATURES = {"Age", "Education", "Income", "GenHlth"}
+DIABETES04_CONTINUOUS_FEATURES = {"BMI", "MentHlth", "PhysHlth"}
+
+
+def _classify_feature_types(frame: pd.DataFrame, dataset_name: str) -> dict[str, str]:
+    """Classify encoded numeric fields using known dataset semantics where available."""
+    result: dict[str, str] = {}
+    for column in frame.columns:
+        if not pd.api.types.is_numeric_dtype(frame[column]) and not pd.api.types.is_bool_dtype(frame[column]):
+            result[column] = "categorical"
+        elif dataset_name == "diabetes04" and column in DIABETES04_ORDINAL_FEATURES:
+            result[column] = "ordinal"
+        elif dataset_name == "diabetes04" and column in DIABETES04_CONTINUOUS_FEATURES:
+            result[column] = "continuous"
+        else:
+            values = pd.to_numeric(frame[column], errors="coerce").dropna()
+            unique = set(values.unique().tolist())
+            if len(unique) <= 2 and unique.issubset({0, 1, 0.0, 1.0}):
+                result[column] = "binary"
+            else:
+                result[column] = "continuous"
+    return result
+
+
+def _typed_feature_profiles(
+    frame: pd.DataFrame, target: pd.Series, feature_types: dict[str, str]
+) -> dict[str, Any]:
+    profiles: dict[str, Any] = {}
+    labels = sorted(pd.Series(target).dropna().unique().tolist())
+    for column, kind in feature_types.items():
+        per_class: dict[str, Any] = {}
+        for label in labels:
+            values = frame.loc[target.index[target == label], column]
+            if kind == "binary":
+                numeric = pd.to_numeric(values, errors="coerce").dropna()
+                per_class[str(label)] = {
+                    "count": int(numeric.size),
+                    "positive_rate": _safe_number(numeric.mean()) if numeric.size else None,
+                }
+            elif kind == "ordinal":
+                distribution = values.fillna("<MISSING>").astype(str).value_counts(normalize=True)
+                per_class[str(label)] = {
+                    "count": int(len(values)),
+                    "category_proportions": {
+                        str(key): float(value) for key, value in distribution.items()
+                    },
+                }
+            elif kind == "categorical":
+                distribution = values.fillna("<MISSING>").astype(str).value_counts(normalize=True).head(10)
+                per_class[str(label)] = {
+                    "count": int(len(values)),
+                    "category_proportions": {
+                        str(key): float(value) for key, value in distribution.items()
+                    },
+                }
+            else:
+                numeric = pd.to_numeric(values, errors="coerce").dropna()
+                per_class[str(label)] = {
+                    "count": int(numeric.size),
+                    "mean": _safe_number(numeric.mean()) if numeric.size else None,
+                    "std": _safe_number(numeric.std(ddof=1)) if numeric.size > 1 else None,
+                    "median": _safe_number(numeric.median()) if numeric.size else None,
+                    "q25": _safe_number(numeric.quantile(0.25)) if numeric.size else None,
+                    "q75": _safe_number(numeric.quantile(0.75)) if numeric.size else None,
+                }
+        profiles[column] = {"type": kind, "by_class": per_class}
+    return profiles
+
 def run_feature_diagnostics(
     frame: pd.DataFrame,
     config,
@@ -162,8 +231,13 @@ def run_feature_diagnostics(
                 })
     confusion_pairs.sort(key=lambda item: item["count"], reverse=True)
 
+    feature_types = _classify_feature_types(prepared.X_train, config.name)
     return {
         "dataset": config.name,
+        "feature_types": feature_types,
+        "typed_feature_profiles_train": _typed_feature_profiles(
+            prepared.X_train, prepared.y_train, feature_types
+        ),
         "target": config.target,
         "task": config.task,
         "analysis_partition": "validation_sample_only",
