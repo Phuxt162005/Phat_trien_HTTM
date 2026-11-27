@@ -36,6 +36,13 @@ models/diabetes04/*
 !models/diabetes04/deep_learning_mlp.pt
 !models/diabetes04/deep_learning_preprocessor.joblib
 
+# Share experiment reports; keep large model artifacts local.
+!models/diabetes04/feature_diagnostics.json
+!models/diabetes04/imbalance_comparison.json
+!models/diabetes04/minority_threshold_tuning.json
+!models/diabetes04/model_benchmark.json
+!models/diabetes04/classwise_probability_tuning.json
+
 logs/**
 !logs/.gitkeep
 *.log

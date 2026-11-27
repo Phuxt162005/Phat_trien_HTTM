@@ -1,0 +1,1272 @@
+{
+  "dataset": "diabetes04",
+  "target": "Diabetes_012",
+  "task": "multiclass_classification",
+  "analysis_partition": "validation_sample_only",
+  "validation_sample_size": 10000,
+  "validation_total_rows": 38059,
+  "test_partition_accessed": false,
+  "class_distribution_train": {
+    "0.0": 149587,
+    "2.0": 24741,
+    "1.0": 3241
+  },
+  "validation_confusion_pairs_sample": [
+    {
+      "actual_class": "0.0",
+      "predicted_class": "2.0",
+      "count": 853
+    },
+    {
+      "actual_class": "2.0",
+      "predicted_class": "0.0",
+      "count": 759
+    },
+    {
+      "actual_class": "1.0",
+      "predicted_class": "0.0",
+      "count": 109
+    },
+    {
+      "actual_class": "1.0",
+      "predicted_class": "2.0",
+      "count": 48
+    },
+    {
+      "actual_class": "0.0",
+      "predicted_class": "1.0",
+      "count": 8
+    },
+    {
+      "actual_class": "2.0",
+      "predicted_class": "1.0",
+      "count": 1
+    }
+  ],
+  "validation_permutation_importance_macro_f1": [
+    {
+      "feature": "GenHlth",
+      "importance_mean": 0.034536611334940424,
+      "importance_std": 0.0021463089495754525
+    },
+    {
+      "feature": "BMI",
+      "importance_mean": 0.030390159625181417,
+      "importance_std": 0.002810010379806425
+    },
+    {
+      "feature": "HighBP",
+      "importance_mean": 0.023707662175520745,
+      "importance_std": 0.0009005552765042859
+    },
+    {
+      "feature": "HighChol",
+      "importance_mean": 0.015762546386044258,
+      "importance_std": 0.000874061079947969
+    },
+    {
+      "feature": "Age",
+      "importance_mean": 0.0156327189576006,
+      "importance_std": 0.002214680180220209
+    },
+    {
+      "feature": "HeartDiseaseorAttack",
+      "importance_mean": 0.0050331642438204245,
+      "importance_std": 0.0013589576594011785
+    },
+    {
+      "feature": "Education",
+      "importance_mean": 0.004700748593652955,
+      "importance_std": 0.00031433721862053594
+    },
+    {
+      "feature": "Fruits",
+      "importance_mean": 0.003367218416974164,
+      "importance_std": 0.001727114313952469
+    },
+    {
+      "feature": "Income",
+      "importance_mean": 0.002488296575213137,
+      "importance_std": 0.0019440555757012524
+    },
+    {
+      "feature": "PhysActivity",
+      "importance_mean": 0.0021654946985752064,
+      "importance_std": 0.001574442337539778
+    },
+    {
+      "feature": "HvyAlcoholConsump",
+      "importance_mean": 0.0019830515512609947,
+      "importance_std": 0.0007301157132035732
+    },
+    {
+      "feature": "Sex",
+      "importance_mean": 0.0018110893219033437,
+      "importance_std": 0.00036260629874810684
+    },
+    {
+      "feature": "Smoker",
+      "importance_mean": 0.0017778866487879557,
+      "importance_std": 0.0016996937902163773
+    },
+    {
+      "feature": "CholCheck",
+      "importance_mean": 0.001523828267898449,
+      "importance_std": 0.00042553519683811145
+    },
+    {
+      "feature": "Veggies",
+      "importance_mean": 0.0010014241879243158,
+      "importance_std": 0.0009754306979834368
+    },
+    {
+      "feature": "NoDocbcCost",
+      "importance_mean": 0.0008831890359672911,
+      "importance_std": 0.0006999253353902943
+    },
+    {
+      "feature": "MentHlth",
+      "importance_mean": 0.0006613529183554882,
+      "importance_std": 0.0003852543480378671
+    },
+    {
+      "feature": "Stroke",
+      "importance_mean": 0.00040138545722606667,
+      "importance_std": 9.271059736423055e-05
+    },
+    {
+      "feature": "AnyHealthcare",
+      "importance_mean": 7.310561966256124e-05,
+      "importance_std": 0.00033290429407834503
+    },
+    {
+      "feature": "PhysHlth",
+      "importance_mean": -0.0011752742527656828,
+      "importance_std": 0.0014889172402104728
+    },
+    {
+      "feature": "DiffWalk",
+      "importance_mean": -0.002031566964697251,
+      "importance_std": 0.0011103237659284765
+    }
+  ],
+  "numeric_class_profiles_train": {
+    "HighBP": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.37160314733232164,
+        "std": 0.48323473519113164,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.6278926257327985,
+        "std": 0.48344140127548896,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.7530819287821834,
+        "std": 0.43122738024543045,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      }
+    },
+    "HighChol": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.3784085515452546,
+        "std": 0.4849918474635272,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.6189447701326751,
+        "std": 0.48572104703107855,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.6702639343599692,
+        "std": 0.4701267126748253,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      }
+    },
+    "CholCheck": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.9571887931437892,
+        "std": 0.20243191786177847,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.9854983029929034,
+        "std": 0.1195650815090053,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.9936138393759347,
+        "std": 0.07965948819236937,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      }
+    },
+    "BMI": {
+      "0.0": {
+        "count": 149587,
+        "mean": 27.736073321879577,
+        "std": 6.256881908870973,
+        "median": 27.0,
+        "q25": 24.0,
+        "q75": 30.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 30.701018204257945,
+        "std": 6.817309275151271,
+        "median": 30.0,
+        "q25": 26.0,
+        "q75": 34.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 32.0,
+        "std": 7.435592482776826,
+        "median": 31.0,
+        "q25": 27.0,
+        "q75": 36.0
+      }
+    },
+    "Smoker": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.4299370934640042,
+        "std": 0.495068507977581,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.5010799136069114,
+        "std": 0.500075988146288,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.5165110545248778,
+        "std": 0.4997374101988432,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      }
+    },
+    "Stroke": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.032135145433760955,
+        "std": 0.17635953556707354,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.05646405430422709,
+        "std": 0.23085126823114469,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.09235681662018512,
+        "std": 0.2895348396374772,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      }
+    },
+    "HeartDiseaseorAttack": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.07151022481900166,
+        "std": 0.25767606880312277,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.14439987658130207,
+        "std": 0.351548978797851,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.22286892203225414,
+        "std": 0.4161794881619955,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      }
+    },
+    "PhysActivity": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.77947950022395,
+        "std": 0.41459903288299643,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.6818883060783709,
+        "std": 0.4658149779616977,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.6313406895436724,
+        "std": 0.48245106601241666,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      }
+    },
+    "Fruits": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.6432176592885746,
+        "std": 0.4790513920518977,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.6062943535945696,
+        "std": 0.4886462766660458,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.5844145345782304,
+        "std": 0.49283263225649954,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 1.0
+      }
+    },
+    "Veggies": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.8215085535507765,
+        "std": 0.3829271866132273,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.7719839555692688,
+        "std": 0.4196177504975454,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.7591851582393597,
+        "std": 0.4275867672464344,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      }
+    },
+    "HvyAlcoholConsump": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.061221897624793596,
+        "std": 0.2397376922700511,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.043813637766121565,
+        "std": 0.204711829554701,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.023402449375530494,
+        "std": 0.1511810124891685,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      }
+    },
+    "AnyHealthcare": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.9496547159846778,
+        "std": 0.21865716547249286,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.947238506633755,
+        "std": 0.22359146541330777,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.9607129865405603,
+        "std": 0.19428090395343287,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0
+      }
+    },
+    "NoDocbcCost": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.07902424675941092,
+        "std": 0.2697775041074911,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.12218451095340944,
+        "std": 0.32754932418242155,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.10820096196596743,
+        "std": 0.31064032915788176,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      }
+    },
+    "GenHlth": {
+      "0.0": {
+        "count": 149587,
+        "mean": 2.36870851076631,
+        "std": 1.0186718655131441,
+        "median": 2.0,
+        "q25": 2.0,
+        "q75": 3.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 2.990435050910213,
+        "std": 1.0284087382429767,
+        "median": 3.0,
+        "q25": 2.0,
+        "q75": 4.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 3.2930358514207185,
+        "std": 1.009243657294811,
+        "median": 3.0,
+        "q25": 3.0,
+        "q75": 4.0
+      }
+    },
+    "MentHlth": {
+      "0.0": {
+        "count": 149587,
+        "mean": 2.931150434195485,
+        "std": 7.046274197555079,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 2.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 4.506325208269053,
+        "std": 8.898156979606119,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 4.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 4.465219675841721,
+        "std": 8.930408484301596,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 3.0
+      }
+    },
+    "PhysHlth": {
+      "0.0": {
+        "count": 149587,
+        "mean": 3.5625622547413878,
+        "std": 7.985731789801744,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 2.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 6.40357914224005,
+        "std": 10.351747608196973,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 8.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 7.967947940665292,
+        "std": 11.285641614809514,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 15.0
+      }
+    },
+    "DiffWalk": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.13162908541517646,
+        "std": 0.3380882036038271,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.2761493366244986,
+        "std": 0.44716056984326513,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.3730245341740431,
+        "std": 0.48361832521414316,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0
+      }
+    },
+    "Sex": {
+      "0.0": {
+        "count": 149587,
+        "mean": 0.43366067906970523,
+        "std": 0.49558121065808614,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 0.437519284171552,
+        "std": 0.49615734979394305,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 0.47912372175740675,
+        "std": 0.49957408708192513,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0
+      }
+    },
+    "Age": {
+      "0.0": {
+        "count": 149587,
+        "mean": 7.792361635703637,
+        "std": 3.104091710348676,
+        "median": 8.0,
+        "q25": 6.0,
+        "q75": 10.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 9.081456340635606,
+        "std": 2.600836494478255,
+        "median": 9.0,
+        "q25": 8.0,
+        "q75": 11.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 9.37387332767471,
+        "std": 2.3308384913409617,
+        "median": 10.0,
+        "q25": 8.0,
+        "q75": 11.0
+      }
+    },
+    "Education": {
+      "0.0": {
+        "count": 149587,
+        "mean": 5.105543930956567,
+        "std": 0.9609925569937959,
+        "median": 5.0,
+        "q25": 4.0,
+        "q75": 6.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 4.7914224004936745,
+        "std": 1.0722368367935675,
+        "median": 5.0,
+        "q25": 4.0,
+        "q75": 6.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 4.746695768158118,
+        "std": 1.0624315542944431,
+        "median": 5.0,
+        "q25": 4.0,
+        "q75": 6.0
+      }
+    },
+    "Income": {
+      "0.0": {
+        "count": 149587,
+        "mean": 6.20844725811735,
+        "std": 2.006443109952505,
+        "median": 7.0,
+        "q25": 5.0,
+        "q75": 8.0
+      },
+      "1.0": {
+        "count": 3241,
+        "mean": 5.365936439370564,
+        "std": 2.193424473431934,
+        "median": 6.0,
+        "q25": 4.0,
+        "q75": 7.0
+      },
+      "2.0": {
+        "count": 24741,
+        "mean": 5.217452811123237,
+        "std": 2.215603006073905,
+        "median": 6.0,
+        "q25": 3.0,
+        "q75": 7.0
+      }
+    }
+  },
+  "numeric_pairwise_effect_sizes_train": [
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "GenHlth",
+      "standardized_mean_difference": -0.9085734465290359,
+      "absolute_effect_size": 0.9085734465290359
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "HighBP",
+      "standardized_mean_difference": -0.8010895516584849,
+      "absolute_effect_size": 0.8010895516584849
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "DiffWalk",
+      "standardized_mean_difference": -0.666252249364277,
+      "absolute_effect_size": 0.666252249364277
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "BMI",
+      "standardized_mean_difference": -0.6623763572026702,
+      "absolute_effect_size": 0.6623763572026702
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "GenHlth",
+      "standardized_mean_difference": -0.6102062978197548,
+      "absolute_effect_size": 0.6102062978197548
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "HighChol",
+      "standardized_mean_difference": -0.6043679665789738,
+      "absolute_effect_size": 0.6043679665789738
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "HighBP",
+      "standardized_mean_difference": -0.5303574754052489,
+      "absolute_effect_size": 0.5303574754052489
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "HeartDiseaseorAttack",
+      "standardized_mean_difference": -0.5300076044849743,
+      "absolute_effect_size": 0.5300076044849743
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "Age",
+      "standardized_mean_difference": -0.526033109794906,
+      "absolute_effect_size": 0.526033109794906
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "PhysHlth",
+      "standardized_mean_difference": -0.5163297434571523,
+      "absolute_effect_size": 0.5163297434571523
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "HighChol",
+      "standardized_mean_difference": -0.4959434827373437,
+      "absolute_effect_size": 0.4959434827373437
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "Income",
+      "standardized_mean_difference": 0.4863932812420686,
+      "absolute_effect_size": 0.4863932812420686
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "BMI",
+      "standardized_mean_difference": -0.4729320449701294,
+      "absolute_effect_size": 0.4729320449701294
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "DiffWalk",
+      "standardized_mean_difference": -0.4241077806193469,
+      "absolute_effect_size": 0.4241077806193469
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "Income",
+      "standardized_mean_difference": 0.4190370999255155,
+      "absolute_effect_size": 0.4190370999255155
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "Age",
+      "standardized_mean_difference": -0.4166068154250668,
+      "absolute_effect_size": 0.4166068154250668
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "Education",
+      "standardized_mean_difference": 0.36766072864240024,
+      "absolute_effect_size": 0.36766072864240024
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "PhysHlth",
+      "standardized_mean_difference": -0.3532233536031075,
+      "absolute_effect_size": 0.3532233536031075
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "PhysActivity",
+      "standardized_mean_difference": 0.34865318643719984,
+      "absolute_effect_size": 0.34865318643719984
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "Education",
+      "standardized_mean_difference": 0.32602662870392246,
+      "absolute_effect_size": 0.32602662870392246
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "Stroke",
+      "standardized_mean_difference": -0.3065770226119429,
+      "absolute_effect_size": 0.3065770226119429
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "GenHlth",
+      "standardized_mean_difference": -0.29916592501491057,
+      "absolute_effect_size": 0.29916592501491057
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "HighBP",
+      "standardized_mean_difference": -0.28608637770226647,
+      "absolute_effect_size": 0.28608637770226647
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "HeartDiseaseorAttack",
+      "standardized_mean_difference": -0.28032530040547865,
+      "absolute_effect_size": 0.28032530040547865
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "PhysActivity",
+      "standardized_mean_difference": 0.2347351097688052,
+      "absolute_effect_size": 0.2347351097688052
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "MentHlth",
+      "standardized_mean_difference": -0.22215111665696535,
+      "absolute_effect_size": 0.22215111665696535
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "MentHlth",
+      "standardized_mean_difference": -0.208911264833916,
+      "absolute_effect_size": 0.208911264833916
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "DiffWalk",
+      "standardized_mean_difference": -0.20201754057678584,
+      "absolute_effect_size": 0.20201754057678584
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "CholCheck",
+      "standardized_mean_difference": -0.1918074202538657,
+      "absolute_effect_size": 0.1918074202538657
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "HeartDiseaseorAttack",
+      "standardized_mean_difference": -0.19175347873042173,
+      "absolute_effect_size": 0.19175347873042173
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "BMI",
+      "standardized_mean_difference": -0.1763326686596035,
+      "absolute_effect_size": 0.1763326686596035
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "Smoker",
+      "standardized_mean_difference": -0.1746380080903453,
+      "absolute_effect_size": 0.1746380080903453
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "HvyAlcoholConsump",
+      "standardized_mean_difference": 0.16496151833958034,
+      "absolute_effect_size": 0.16496151833958034
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "Veggies",
+      "standardized_mean_difference": 0.1599770765792025,
+      "absolute_effect_size": 0.1599770765792025
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "NoDocbcCost",
+      "standardized_mean_difference": -0.15918657415140297,
+      "absolute_effect_size": 0.15918657415140297
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "Smoker",
+      "standardized_mean_difference": -0.1436720192776121,
+      "absolute_effect_size": 0.1436720192776121
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "CholCheck",
+      "standardized_mean_difference": -0.14082243965874242,
+      "absolute_effect_size": 0.14082243965874242
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "PhysHlth",
+      "standardized_mean_difference": -0.13990696500832278,
+      "absolute_effect_size": 0.13990696500832278
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "Stroke",
+      "standardized_mean_difference": -0.13691905426169845,
+      "absolute_effect_size": 0.13691905426169845
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "Veggies",
+      "standardized_mean_difference": 0.129057203088549,
+      "absolute_effect_size": 0.129057203088549
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "HvyAlcoholConsump",
+      "standardized_mean_difference": 0.12893249408944618,
+      "absolute_effect_size": 0.12893249408944618
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "Stroke",
+      "standardized_mean_difference": -0.12666738121778687,
+      "absolute_effect_size": 0.12666738121778687
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "Age",
+      "standardized_mean_difference": -0.12371244527091971,
+      "absolute_effect_size": 0.12371244527091971
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "Fruits",
+      "standardized_mean_difference": 0.1222438792287488,
+      "absolute_effect_size": 0.1222438792287488
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "HighChol",
+      "standardized_mean_difference": -0.10873651838119616,
+      "absolute_effect_size": 0.10873651838119616
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "NoDocbcCost",
+      "standardized_mean_difference": -0.10573366685336304,
+      "absolute_effect_size": 0.10573366685336304
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "PhysActivity",
+      "standardized_mean_difference": 0.10518610117202506,
+      "absolute_effect_size": 0.10518610117202506
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "CholCheck",
+      "standardized_mean_difference": -0.09520556780306415,
+      "absolute_effect_size": 0.09520556780306415
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "Sex",
+      "standardized_mean_difference": -0.09163168077821038,
+      "absolute_effect_size": 0.09163168077821038
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "Sex",
+      "standardized_mean_difference": -0.08334562259920175,
+      "absolute_effect_size": 0.08334562259920175
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "Fruits",
+      "standardized_mean_difference": 0.07704284116620111,
+      "absolute_effect_size": 0.07704284116620111
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "HvyAlcoholConsump",
+      "standardized_mean_difference": 0.07282316674080652,
+      "absolute_effect_size": 0.07282316674080652
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "AnyHealthcare",
+      "standardized_mean_difference": -0.0680882292495265,
+      "absolute_effect_size": 0.0680882292495265
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "Income",
+      "standardized_mean_difference": 0.06709468142455029,
+      "absolute_effect_size": 0.06709468142455029
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "2.0"
+      ],
+      "feature": "AnyHealthcare",
+      "standardized_mean_difference": -0.05134645725554694,
+      "absolute_effect_size": 0.05134645725554694
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "NoDocbcCost",
+      "standardized_mean_difference": 0.04472658065765405,
+      "absolute_effect_size": 0.04472658065765405
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "Fruits",
+      "standardized_mean_difference": 0.04443959159057275,
+      "absolute_effect_size": 0.04443959159057275
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "Education",
+      "standardized_mean_difference": 0.042053240376226854,
+      "absolute_effect_size": 0.042053240376226854
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "Smoker",
+      "standardized_mean_difference": -0.030876075521903537,
+      "absolute_effect_size": 0.030876075521903537
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "Veggies",
+      "standardized_mean_difference": 0.0299968344915078,
+      "absolute_effect_size": 0.0299968344915078
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "AnyHealthcare",
+      "standardized_mean_difference": 0.011044875601735425,
+      "absolute_effect_size": 0.011044875601735425
+    },
+    {
+      "class_pair": [
+        "0.0",
+        "1.0"
+      ],
+      "feature": "Sex",
+      "standardized_mean_difference": -0.00778582776119562,
+      "absolute_effect_size": 0.00778582776119562
+    },
+    {
+      "class_pair": [
+        "1.0",
+        "2.0"
+      ],
+      "feature": "MentHlth",
+      "standardized_mean_difference": 0.00460479520340488,
+      "absolute_effect_size": 0.00460479520340488
+    }
+  ],
+  "categorical_class_profiles_train": {},
+  "caution": "Permutation importance measures predictive contribution on this validation sample, not causality. Standardized mean differences describe marginal numeric separation and do not establish clinical relevance. Test data is not accessed."
+}
