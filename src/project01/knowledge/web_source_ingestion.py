@@ -118,6 +118,7 @@ def extract_article(html: str) -> dict[str, str | None]:
     def normalized_line(line: str) -> str:
         import unicodedata
         value = unicodedata.normalize("NFKD", line.casefold())
+        value = value.replace("đ", "d")
         return "".join(char for char in value if not unicodedata.combining(char))
 
     cleaned: list[str] = []
