@@ -1,0 +1,39 @@
+{
+  "official_datasets": [
+    {
+      "id": "diabetes01",
+      "file": "diabetes01.csv",
+      "target": "diabetes",
+      "has_target": true,
+      "task": "binary_classification",
+      "role": "original_supervised",
+      "notes": "Giữ nguyên dữ liệu gốc; audit duplicate rows trước khi xử lý."
+    },
+    {
+      "id": "diabetes02",
+      "file": "diabetes02.csv",
+      "target": null,
+      "has_target": false,
+      "task": "unlabeled_health_tabular",
+      "role": "external_unlabeled",
+      "notes": "Không có nhãn diabetes; không tự tạo nhãn từ các chỉ số lâm sàng."
+    },
+    {
+      "id": "diabetes04",
+      "file": "diabetes04.csv",
+      "target": "Diabetes_012",
+      "has_target": true,
+      "task": "multiclass_classification",
+      "role": "original_supervised",
+      "notes": "Giữ nguyên dữ liệu gốc; audit duplicate rows trước khi xử lý."
+    }
+  ],
+  "excluded_from_official_set": [
+    {
+      "id": "diabetes03",
+      "reason": "Đã được người dùng thay thế bằng diabetes02."
+    }
+  ],
+  "raw_files_committed": false,
+  "raw_files_note": "CSV gốc nằm trong data/raw/ trên máy local và được loại khỏi Git bởi .gitignore."
+}
