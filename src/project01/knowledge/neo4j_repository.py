@@ -38,8 +38,9 @@ RETURN labels(node) AS labels,
        } END)[0..10] AS related,
        collect(DISTINCT CASE WHEN doc IS NULL THEN null ELSE {
            document_id: doc.id, title: doc.title, url: doc.url,
-           page: coalesce(properties(node).page_start, doc.page),
-           page_start: properties(node).page_start, page_end: properties(node).page_end,
+           page: properties(node)['page_start'],
+           page_start: properties(node)['page_start'],
+           page_end: properties(node)['page_end'],
            chunk_id: CASE WHEN node:DocumentChunk THEN node.id ELSE null END,
            source: CASE WHEN source IS NULL AND node_source IS NULL THEN null ELSE {
                name: coalesce(source.name, source.source_name, node_source.name, node_source.source_name),
@@ -93,7 +94,6 @@ class Neo4jGraphRepository:
         if not lucene_query:
             return []
         parameters = {
-            "index_name": FULLTEXT_INDEX,
             "query": lucene_query,
             "limit": int(limit),
         }
