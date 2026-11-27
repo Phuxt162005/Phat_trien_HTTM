@@ -64,7 +64,8 @@ def test_neo4j_settings_validation():
 
 
 def test_lucene_query_is_tokenized():
-    assert _lucene_terms("diabetes type-2") == '"diabetes" AND "type" AND "2"'
+    assert _lucene_terms("diabetes type-2") == '"diabetes" OR "type" OR "2"'
+    assert _lucene_terms("Bệnh tiểu đường là gì?") == '"Bệnh" OR "tiểu" OR "đường"'
     assert _lucene_terms("!!!") == ""
 
 
@@ -104,7 +105,7 @@ def test_repository_fulltext_search_returns_chunk_provenance():
     assert "SEARCH node IN" in query
     assert "MATCH (node:DocumentChunk)" in query
     assert params == {
-        "query": '"diabetes" AND "symptoms"',
+        "query": '"diabetes" OR "symptoms"',
         "limit": 4,
     }
     with pytest.raises(ValueError):
