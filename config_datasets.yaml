@@ -1,28 +1,27 @@
-# The three original datasets are preserved as separate experiments.
-# Put the original CSV files in data/raw/ without changing their contents.
+# Keep the three official datasets separate; never merge them implicitly.
+# Place the original CSV files in data/raw/ without modifying their contents.
 datasets:
   diabetes01:
     file: diabetes01.csv
     target: diabetes
-    task: binary
+    task: binary_classification
+    has_target: true
     excluded_features: []
-    role: original
-  diabetes03:
-    file: diabetes03.csv
-    target: diabetes
-    task: binary
-    excluded_features:
-      - year
-      - location
-      - race:AfricanAmerican
-      - race:Asian
-      - race:Caucasian
-      - race:Hispanic
-      - race:Other
-    role: original
+    role: original_supervised
+  diabetes02:
+    file: diabetes02.csv
+    target: null
+    task: unlabeled_health_tabular
+    has_target: false
+    excluded_features: []
+    role: external_unlabeled
   diabetes04:
     file: diabetes04.csv
     target: Diabetes_012
-    task: multiclass
+    task: multiclass_classification
+    has_target: true
     excluded_features: []
-    role: original
+    role: original_supervised
+
+# Duplicates are reported for review; no rows are removed automatically.
+duplicate_policy: report_only
