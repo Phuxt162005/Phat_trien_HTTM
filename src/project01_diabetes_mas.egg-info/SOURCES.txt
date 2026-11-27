@@ -13,6 +13,8 @@ src/project01/config/settings.py
 src/project01/data/__init__.py
 src/project01/data/loader.py
 src/project01/knowledge/__init__.py
+src/project01/knowledge/embeddings.py
+src/project01/knowledge/hybrid_retriever.py
 src/project01/knowledge/ingestion.py
 src/project01/knowledge/neo4j_config.py
 src/project01/knowledge/neo4j_repository.py
@@ -37,6 +39,7 @@ tests/test_classwise_tuning.py
 tests/test_dataset_loader.py
 tests/test_document_ingestion.py
 tests/test_feature_diagnostics.py
+tests/test_hybrid_retrieval.py
 tests/test_ml_agents.py
 tests/test_ml_deep_learning.py
 tests/test_ml_pipeline.py
