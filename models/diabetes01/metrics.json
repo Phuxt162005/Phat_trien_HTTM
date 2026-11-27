@@ -201,6 +201,17 @@
       "roc_auc": 0.9766513375477696
     }
   },
+  "deep_learning": {
+    "validation_score": 0.9778861579596874,
+    "validation_metric": "roc_auc",
+    "best_epoch": 75,
+    "epochs_ran": 85,
+    "stopped_early": true,
+    "classes": [
+      "0",
+      "1"
+    ]
+  },
   "preprocessing": {
     "numeric_columns": [
       "age",
@@ -216,13 +227,6 @@
     ],
     "excluded_features": [],
     "constant_features": []
-  },
-  "deep_learning": {
-    "validation_score": 0.9778861579596874,
-    "validation_metric": "roc_auc",
-    "best_epoch": 75,
-    "epochs_ran": 85,
-    "stopped_early": true
   },
   "models": {
     "logistic_regression": {

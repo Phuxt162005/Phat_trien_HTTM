@@ -198,6 +198,148 @@
         },
         "roc_auc": 0.9766513375477696
       }
+    },
+    "agent_log": [
+      {
+        "agent": "PreprocessingAgent",
+        "status": "success"
+      },
+      {
+        "agent": "ModelAAgent",
+        "status": "success"
+      },
+      {
+        "agent": "ModelBAgent",
+        "status": "success"
+      },
+      {
+        "agent": "ConsensusAgent",
+        "status": "success"
+      },
+      {
+        "agent": "ExplanationAgent",
+        "status": "success"
+      },
+      {
+        "agent": "EvaluationAgent",
+        "status": "success"
+      },
+      {
+        "agent": "DeepLearningAgent",
+        "status": "success"
+      },
+      {
+        "agent": "SafetyReviewAgent",
+        "status": "success"
+      }
+    ],
+    "message_log": [
+      {
+        "sender": "ModelAAgent",
+        "receiver": "ConsensusAgent",
+        "message_type": "model_ready",
+        "payload": {
+          "model": "ModelAAgent",
+          "validation_score": 0.9630670963023905
+        },
+        "status": "success",
+        "message_id": "77221c1d-5b9f-4be2-8e4b-c334e356ea0e",
+        "created_at": "2026-11-27T08:24:13.387106+00:00"
+      },
+      {
+        "sender": "ModelBAgent",
+        "receiver": "ConsensusAgent",
+        "message_type": "model_ready",
+        "payload": {
+          "model": "ModelBAgent",
+          "validation_score": 0.9747065393756569
+        },
+        "status": "success",
+        "message_id": "c70f4cc8-78ea-459a-865c-0ad09d902e36",
+        "created_at": "2026-11-27T08:24:30.168949+00:00"
+      },
+      {
+        "sender": "ConsensusAgent",
+        "receiver": "ExplanationAgent",
+        "message_type": "consensus_ready",
+        "payload": {
+          "rows": 15000
+        },
+        "status": "success",
+        "message_id": "ac4ee925-a334-4c73-9a17-bd991a8f3d67",
+        "created_at": "2026-11-27T08:24:30.179054+00:00"
+      },
+      {
+        "sender": "ConsensusAgent",
+        "receiver": "EvaluationAgent",
+        "message_type": "consensus_ready",
+        "payload": {
+          "rows": 15000
+        },
+        "status": "success",
+        "message_id": "e7878e35-94c7-4da3-aa60-dc3d862ae47a",
+        "created_at": "2026-11-27T08:24:30.179079+00:00"
+      },
+      {
+        "sender": "ExplanationAgent",
+        "receiver": "SafetyReviewAgent",
+        "message_type": "explanation_ready",
+        "payload": {
+          "created": true
+        },
+        "status": "success",
+        "message_id": "a039ea8a-2e54-4643-8e39-f72c815996b5",
+        "created_at": "2026-11-27T08:24:30.237340+00:00"
+      },
+      {
+        "sender": "EvaluationAgent",
+        "receiver": "SafetyReviewAgent",
+        "message_type": "evaluation_ready",
+        "payload": {
+          "complete": true
+        },
+        "status": "success",
+        "message_id": "72a08cd1-8b78-46a0-9950-6624957a2050",
+        "created_at": "2026-11-27T08:24:30.285786+00:00"
+      },
+      {
+        "sender": "DeepLearningAgent",
+        "receiver": "SafetyReviewAgent",
+        "message_type": "deep_learning_ready",
+        "payload": {
+          "complete": true
+        },
+        "status": "success",
+        "message_id": "f5df4998-387d-4ef5-99c1-dd656e066ae7",
+        "created_at": "2026-11-27T08:27:42.367238+00:00"
+      },
+      {
+        "sender": "SafetyReviewAgent",
+        "receiver": "MLCoordinatorAgent",
+        "message_type": "review_passed",
+        "payload": {
+          "valid_output": true
+        },
+        "status": "success",
+        "message_id": "e43db6aa-c6a2-4b22-9a06-11a2682372fa",
+        "created_at": "2026-11-27T08:27:42.368151+00:00"
+      }
+    ],
+    "safety_review": {
+      "valid_output": true,
+      "warnings": [
+        "Đây là kết quả dự đoán của mô hình, không phải chẩn đoán y khoa.",
+        "Cần kiểm chứng trên dữ liệu độc lập và được chuyên gia y tế đánh giá trước khi ứng dụng.",
+        "Feature importance không chứng minh quan hệ nhân quả.",
+        "Có mẫu có xác suất lớp cao nhất dưới 0.60; cần thận trọng khi diễn giải."
+      ],
+      "evaluation_summary": {
+        "accuracy": 0.9434,
+        "precision_macro": 0.8057536790028919,
+        "recall_macro": 0.8840522875816994,
+        "f1_macro": 0.8389967028016558,
+        "roc_auc": 0.9710589663916567
+      }
     }
   },
   "diabetes04": {
@@ -452,6 +594,148 @@
           }
         },
         "roc_auc_ovr_macro": 0.7624805923550131
+      }
+    },
+    "agent_log": [
+      {
+        "agent": "PreprocessingAgent",
+        "status": "success"
+      },
+      {
+        "agent": "ModelAAgent",
+        "status": "success"
+      },
+      {
+        "agent": "ModelBAgent",
+        "status": "success"
+      },
+      {
+        "agent": "ConsensusAgent",
+        "status": "success"
+      },
+      {
+        "agent": "ExplanationAgent",
+        "status": "success"
+      },
+      {
+        "agent": "EvaluationAgent",
+        "status": "success"
+      },
+      {
+        "agent": "DeepLearningAgent",
+        "status": "success"
+      },
+      {
+        "agent": "SafetyReviewAgent",
+        "status": "success"
+      }
+    ],
+    "message_log": [
+      {
+        "sender": "ModelAAgent",
+        "receiver": "ConsensusAgent",
+        "message_type": "model_ready",
+        "payload": {
+          "model": "ModelAAgent",
+          "validation_score": 0.4276054073046727
+        },
+        "status": "success",
+        "message_id": "ea6931a1-6df5-4554-8aa4-dd3b25632379",
+        "created_at": "2026-11-27T08:27:45.987661+00:00"
+      },
+      {
+        "sender": "ModelBAgent",
+        "receiver": "ConsensusAgent",
+        "message_type": "model_ready",
+        "payload": {
+          "model": "ModelBAgent",
+          "validation_score": 0.4488891825606462
+        },
+        "status": "success",
+        "message_id": "2bf30c3a-f144-450c-8930-26bf37bff644",
+        "created_at": "2026-11-27T08:29:02.766134+00:00"
+      },
+      {
+        "sender": "ConsensusAgent",
+        "receiver": "ExplanationAgent",
+        "message_type": "consensus_ready",
+        "payload": {
+          "rows": 38052
+        },
+        "status": "success",
+        "message_id": "29bc32c3-2e49-4e4e-aa0f-bb3c9a8ce7d5",
+        "created_at": "2026-11-27T08:29:02.788932+00:00"
+      },
+      {
+        "sender": "ConsensusAgent",
+        "receiver": "EvaluationAgent",
+        "message_type": "consensus_ready",
+        "payload": {
+          "rows": 38052
+        },
+        "status": "success",
+        "message_id": "55cc89c9-e208-49a4-8265-6fd433cdb276",
+        "created_at": "2026-11-27T08:29:02.788957+00:00"
+      },
+      {
+        "sender": "ExplanationAgent",
+        "receiver": "SafetyReviewAgent",
+        "message_type": "explanation_ready",
+        "payload": {
+          "created": true
+        },
+        "status": "success",
+        "message_id": "2fa1f380-5adf-4b15-9b2f-1df0bc8b40a6",
+        "created_at": "2026-11-27T08:29:02.855298+00:00"
+      },
+      {
+        "sender": "EvaluationAgent",
+        "receiver": "SafetyReviewAgent",
+        "message_type": "evaluation_ready",
+        "payload": {
+          "complete": true
+        },
+        "status": "success",
+        "message_id": "de70bcf5-ecce-4d64-8b1c-d89dbf2f8133",
+        "created_at": "2026-11-27T08:29:02.943209+00:00"
+      },
+      {
+        "sender": "DeepLearningAgent",
+        "receiver": "SafetyReviewAgent",
+        "message_type": "deep_learning_ready",
+        "payload": {
+          "complete": true
+        },
+        "status": "success",
+        "message_id": "5c7f92a4-a5a2-4f5c-9b95-4a543006f7f0",
+        "created_at": "2026-11-27T08:29:39.761552+00:00"
+      },
+      {
+        "sender": "SafetyReviewAgent",
+        "receiver": "MLCoordinatorAgent",
+        "message_type": "review_passed",
+        "payload": {
+          "valid_output": true
+        },
+        "status": "success",
+        "message_id": "ce17e8b7-3bb1-4033-99f0-f4ebd43d8289",
+        "created_at": "2026-11-27T08:29:39.764539+00:00"
+      }
+    ],
+    "safety_review": {
+      "valid_output": true,
+      "warnings": [
+        "Đây là kết quả dự đoán của mô hình, không phải chẩn đoán y khoa.",
+        "Cần kiểm chứng trên dữ liệu độc lập và được chuyên gia y tế đánh giá trước khi ứng dụng.",
+        "Feature importance không chứng minh quan hệ nhân quả.",
+        "Có mẫu có xác suất lớp cao nhất dưới 0.60; cần thận trọng khi diễn giải."
+      ],
+      "evaluation_summary": {
+        "accuracy": 0.7895248607169137,
+        "precision_macro": 0.43488861229670367,
+        "recall_macro": 0.4810453170528593,
+        "f1_macro": 0.44615898847991753,
+        "roc_auc_ovr_macro": 0.7749454550335654
       }
     }
   }

@@ -255,6 +255,18 @@
       "roc_auc_ovr_macro": 0.7624805923550131
     }
   },
+  "deep_learning": {
+    "validation_score": 0.4213215591407032,
+    "validation_metric": "f1_macro",
+    "best_epoch": 1,
+    "epochs_ran": 11,
+    "stopped_early": true,
+    "classes": [
+      "0.0",
+      "1.0",
+      "2.0"
+    ]
+  },
   "preprocessing": {
     "numeric_columns": [
       "HighBP",
@@ -282,13 +294,6 @@
     "categorical_columns": [],
     "excluded_features": [],
     "constant_features": []
-  },
-  "deep_learning": {
-    "validation_score": 0.4213215591407032,
-    "validation_metric": "f1_macro",
-    "best_epoch": 1,
-    "epochs_ran": 11,
-    "stopped_early": true
   },
   "models": {
     "logistic_regression": {
