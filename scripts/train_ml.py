@@ -18,6 +18,7 @@ def main() -> int:
     parser.add_argument("--config", type=Path, default=CONFIG_PATH)
     parser.add_argument("--artifact-dir", type=Path, default=ARTIFACT_DIR)
     parser.add_argument("--rf-estimators", type=int, default=120)
+    parser.add_argument("--include-deep-learning", action="store_true", help="Huấn luyện thêm PyTorch MLP (cần cài extra ml).")
     args = parser.parse_args()
 
     configs = load_dataset_configs(args.config)
@@ -35,6 +36,7 @@ def main() -> int:
         result = run_experiment(
             frame, config, artifact_dir=args.artifact_dir,
             rf_estimators=args.rf_estimators,
+            include_deep_learning=args.include_deep_learning,
         )
         summary[name] = {
             "profile": result["profile"],
