@@ -124,6 +124,7 @@ class ChatbotService:
                 continue
             citations.append({
                 "index": len(citations) + 1,
+                "id": item.get("id") or item.get("chunk_id") or item.get("document_id"),
                 "title": title or "Tài liệu tham khảo",
                 "source": source_name or None,
                 "url": url or None,
