@@ -9,31 +9,34 @@ from project01.config.settings import CONFIG_PATH, DATA_DIR, ROOT_DIR
 from project01.data import load_dataset_configs
 
 
+OFFICIAL_DATASETS = ("diabetes01", "diabetes02", "diabetes04")
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Audit original diabetes datasets without modifying them.")
+    parser = argparse.ArgumentParser(description="Audit the official diabetes datasets without modifying source CSV files.")
     parser.add_argument("--data-dir", type=Path, default=DATA_DIR)
     parser.add_argument("--config", type=Path, default=CONFIG_PATH)
     parser.add_argument("--output", type=Path, default=ROOT_DIR / "data" / "manifests" / "original_dataset_audit.json")
     args = parser.parse_args()
 
     configs = load_dataset_configs(args.config)
-    required = {"diabetes01", "diabetes03", "diabetes04"}
+    required = set(OFFICIAL_DATASETS)
     if not required.issubset(configs):
-        raise SystemExit(f"Cấu hình thiếu dataset gốc: {sorted(required - set(configs))}")
+        raise SystemExit(f"Cấu hình thiếu dataset chính thức: {sorted(required - set(configs))}")
 
     coordinator = CoordinatorAgent()
     results = {}
     failed = False
-    for name in ("diabetes01", "diabetes03", "diabetes04"):
+    for name in OFFICIAL_DATASETS:
         result = coordinator.audit_dataset(configs[name], args.data_dir)
         results[name] = result.to_dict()
         print(f"[{result.status.upper()}] {name}")
-        if result.status != "success":
+        if result.status == "failed":
             failed = True
             for error in result.errors:
                 print("  -", error)
-        else:
-            print("  shape:", result.data["shape"], "target:", result.data["target"])
+        elif result.data:
+            print("  shape:", result.data["shape"], "target:", result.data["target"], "has_target:", result.data["has_target"])
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
