@@ -43,19 +43,31 @@ class HybridRetriever:
             entity = item.get("entity") or {}
             evidence_items = item.get("evidence") or []
             chunk_id = next((ev.get("chunk_id") for ev in evidence_items if ev.get("chunk_id")), None)
-            identity = chunk_id or entity.get("id")
+            document_id = next((ev.get("document_id") for ev in evidence_items if ev.get("document_id")), None)
+            identity = chunk_id or document_id or entity.get("id") or entity.get("doc_id")
+            source = next((ev.get("source") for ev in evidence_items if ev.get("source")), None)
+            if source is None and any(entity.get(key) for key in ("source_name", "source_url", "publisher", "license")):
+                source = {
+                    "name": entity.get("source_name"),
+                    "url": entity.get("source_url"),
+                    "publisher": entity.get("publisher"),
+                    "license": entity.get("license"),
+                }
             graph_ranked.append({
                 **item,
                 "id": identity,
-                "entity_id": entity.get("id"),
+                "entity_id": entity.get("id") or entity.get("doc_id"),
+                "document_id": document_id or entity.get("doc_id") or entity.get("id"),
                 "retrieval_method": "graph",
                 "entity": entity,
                 "sources": evidence_items,
-                "source": next((ev.get("source") for ev in evidence_items if ev.get("source")), None),
-                "title": next((ev.get("title") for ev in evidence_items if ev.get("title")), None),
-                "url": next((ev.get("url") for ev in evidence_items if ev.get("url")), None),
-                "page_start": next((ev.get("page_start") for ev in evidence_items if ev.get("page_start")), None),
-                "page_end": next((ev.get("page_end") for ev in evidence_items if ev.get("page_end")), None),
+                "source": source,
+                "title": next((ev.get("title") for ev in evidence_items if ev.get("title")), None)
+                         or entity.get("title") or entity.get("label") or entity.get("question"),
+                "url": next((ev.get("url") for ev in evidence_items if ev.get("url")), None)
+                       or entity.get("url") or entity.get("source_url"),
+                "page_start": next((ev.get("page_start") for ev in evidence_items if ev.get("page_start") is not None), None),
+                "page_end": next((ev.get("page_end") for ev in evidence_items if ev.get("page_end") is not None), None),
             })
 
         keyword_ranked = [
