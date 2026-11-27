@@ -51,7 +51,7 @@ def _fit_and_evaluate(name: str, estimator, prepared: PreparedData) -> ModelOutp
     classes = list(train_model.named_steps["model"].classes_)
     score, metric = _validation_score(
         prepared.y_validation, val_predictions, val_probabilities,
-        prepared.profile["task"], classes,
+        prepared.profile["task_kind"], classes,
     )
 
     final_model = Pipeline([
