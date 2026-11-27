@@ -129,3 +129,18 @@ Các trang dưới đây đã xuất hiện trong kết quả tìm kiếm Vinmec
 - Một số bài Vinmec nêu mục tiêu HbA1c, huyết áp, chỉ định insulin hoặc xử trí thuốc theo bối cảnh riêng. Không trích các con số đó thành khuyến cáo áp dụng cho mọi người; phải đối chiếu guideline hiện hành và giữ đúng bối cảnh bệnh nhân.
 - Kết quả tìm kiếm có thể hiển thị nội dung cũ hoặc trích đoạn không đầy đủ. Phải đọc trang gốc trước khi đưa vào corpus.
 - Tổng danh mục hiện có 53 mã; trong đó có mã trùng URL đã ghi rõ ở các mục trên. Số mã không phải số tài liệu độc lập.
+
+
+## 10. Bổ sung nguồn Vinmec theo chủ đề còn thiếu (VIN-054 đến VIN-058)
+
+Các trang dưới đây được tìm thấy qua tìm kiếm trên tên miền Vinmec ngày 2026-11-27. Chúng mở rộng các nhóm biến chứng thận, bàn tay và nhiễm trùng. URL/tựa đề đã được đối chiếu với kết quả tìm kiếm; vẫn phải chạy audit trực tiếp và kiểm tra nội dung gốc trước khi ingest.
+
+| ID | Tài liệu | Chủ đề | Liên kết |
+|---|---|---|---|
+| VIN-054 | Đường huyết cao, bệnh tiểu đường và cơ thể của bạn | Tăng đường huyết, ảnh hưởng sức khỏe và tuân thủ theo dõi | https://www.vinmec.com/vie/bai-viet/duong-huyet-cao-benh-tieu-duong-va-co-cua-ban-vi |
+| VIN-055 | Bệnh lý bàn tay ở người đái tháo đường | Biến chứng cơ xương khớp và chức năng bàn tay | https://www.vinmec.com/vie/bai-viet/benh-ly-ban-tay-o-nguoi-dai-thao-duong-vi |
+| VIN-056 | Đái tháo đường và vấn đề nhiễm trùng | Nhiễm trùng da, tiết niệu, bàn chân và phòng ngừa | https://www.vinmec.com/vie/bai-viet/dai-thao-duong-va-van-de-nhiem-trung-vi |
+| VIN-057 | Các giai đoạn và đặc điểm của bệnh thận đái tháo đường | Giai đoạn bệnh thận và dấu hiệu tổn thương thận | https://www.vinmec.com/vie/bai-viet/cac-giai-doan-va-dac-diem-cua-benh-dai-thao-duong-vi |
+| VIN-058 | Đái tháo đường và con đường dẫn tới bệnh thận mạn giai đoạn cuối | Tiến triển bệnh thận mạn liên quan đái tháo đường | https://www.vinmec.com/vie/bai-viet/dai-thao-duong-va-con-duong-dan-toi-benh-man-giai-doan-cuoi-vi |
+
+**Lưu ý:** VIN-054 đến VIN-058 là 5 mã mới trong danh mục, không đồng nghĩa 5 bài đã được audit HTTP hoặc tải nội dung. Một số bài có thể trùng chủ đề với VIN-029, VIN-030, VIN-031 và VIN-042; chỉ loại trùng khi so sánh canonical URL hoặc nội dung, không loại chỉ vì chủ đề giống nhau.
