@@ -26,13 +26,13 @@ def run_experiment(
     individual_metrics = {
         name: evaluate_predictions(
             prepared.y_test, output.test_predictions, output.test_probabilities,
-            output.classes, config.task,
+            output.classes, prepared.profile["task_kind"],
         )
         for name, output in models.items()
     }
     voting_metrics = evaluate_predictions(
         prepared.y_test, voting["predictions"], voting["probabilities"],
-        voting["classes"], config.task,
+        voting["classes"], prepared.profile["task_kind"],
     )
 
     result = {
