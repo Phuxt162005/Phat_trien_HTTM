@@ -55,3 +55,46 @@ def test_import_rejects_non_vinmec_canonical_url(tmp_path):
     from project01.knowledge.web_source_ingestion import _normalise_url
     with pytest.raises(ValueError):
         _normalise_url("https://example.com/article")
+
+
+
+def test_import_saves_article_and_metadata_with_permission(tmp_path, monkeypatch):
+    import project01.knowledge.web_source_ingestion as importer
+
+    audit = tmp_path / "audit.json"
+    audit.write_text(json.dumps({"results": [
+        {
+            "status": "ok", "page_valid": True,
+            "catalog_id": "VIN-001",
+            "catalog_title": "Catalog title",
+            "url": "https://www.vinmec.com/vie/a",
+        }
+    ]}), encoding="utf-8")
+    html = """
+    <html><head><title>Vinmec title</title>
+    <link rel="canonical" href="/vie/canonical-a">
+    <meta property="article:modified_time" content="2025-01-02">
+    </head><body><article><h1>Diabetes article</h1><p>
+    """ + ("Long enough article content about diabetes. " * 30) + """
+    </p></article></body></html>
+    """
+    monkeypatch.setattr(importer, "_robots_allowed", lambda *_args: True)
+    monkeypatch.setattr(importer, "_fetch", lambda *_args: (
+        html, "https://www.vinmec.com/vie/a", 200
+    ))
+
+    report = importer.import_vinmec_articles(
+        audit, tmp_path / "documents",
+        rights_note="Permission verified by project owner",
+        delay=0,
+    )
+
+    assert report["status_counts"] == {"saved": 1}
+    article_dir = next((tmp_path / "documents").glob("VIN-001-*"))
+    metadata = json.loads((article_dir / "metadata.json").read_text(encoding="utf-8"))
+    body = (article_dir / "content.md").read_text(encoding="utf-8")
+    assert metadata["canonical_url"] == "https://www.vinmec.com/vie/canonical-a"
+    assert metadata["modified_at"] == "2025-01-02"
+    assert metadata["rights_note"] == "Permission verified by project owner"
+    assert "Long enough article content" in body
+    assert (tmp_path / "documents" / "extraction_report.json").exists()
