@@ -27,9 +27,42 @@
 - `CoordinatorAgent` điều phối audit và ghi execution trace.
 - Script `scripts/audit_datasets.py` audit ba dataset và xuất JSON.
 
+## Pipeline ML/DL
+
+Notebook gốc được giữ nguyên trong \`legacy/\`. Phần supervised ML đã được tách thành các module Python:
+
+- \`src/project01/ml/preprocessing.py\`: chia train/validation/test theo stratify; imputer, scaler và one-hot encoder chỉ fit trên train.
+- \`src/project01/ml/models.py\`: Logistic Regression, Random Forest và Soft Voting.
+- \`src/project01/ml/evaluation.py\`: Accuracy, Macro Precision/Recall/F1, ROC-AUC, confusion matrix và classification report.
+- \`src/project01/ml/pipeline.py\`: điều phối thí nghiệm và lưu model artifacts/metrics.
+- \`src/project01/ml/deep_learning.py\`: PyTorch MLP tùy chọn, class weights, ReduceLROnPlateau, checkpoint theo validation và Early Stopping.
+- \`scripts/train_ml.py\`: điểm chạy pipeline.
+
+Chỉ \`diabetes01\` và \`diabetes04\` được dùng cho supervised classification. \`diabetes02\` bị từ chối ở bước preprocessing nếu không có target hợp lệ.
+
+Chạy baseline ML:
+
+\`\`\`bash
+python scripts/train_ml.py
+\`\`\`
+
+Chạy cả PyTorch MLP (cài \`pip install -e ".[ml]"\` trước):
+
+\`\`\`bash
+python scripts/train_ml.py --include-deep-learning
+\`\`\`
+
+Chạy một dataset:
+
+\`\`\`bash
+python scripts/train_ml.py --datasets diabetes01
+\`\`\`
+
+Artifacts được lưu trong \`models/<dataset>/\`, gồm model \`.joblib\`, preprocessing pipeline và \`metrics.json\`. Khi bật Deep Learning, state dict và preprocessing riêng của MLP cũng được lưu.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
-Các phần ML/DL, mô hình đã huấn luyện, Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
+Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
 
 ## 1. Chuẩn bị môi trường
 
