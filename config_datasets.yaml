@@ -1,0 +1,28 @@
+# The three original datasets are preserved as separate experiments.
+# Put the original CSV files in data/raw/ without changing their contents.
+datasets:
+  diabetes01:
+    file: diabetes01.csv
+    target: diabetes
+    task: binary
+    excluded_features: []
+    role: original
+  diabetes03:
+    file: diabetes03.csv
+    target: diabetes
+    task: binary
+    excluded_features:
+      - year
+      - location
+      - race:AfricanAmerican
+      - race:Asian
+      - race:Caucasian
+      - race:Hispanic
+      - race:Other
+    role: original
+  diabetes04:
+    file: diabetes04.csv
+    target: Diabetes_012
+    task: multiclass
+    excluded_features: []
+    role: original
