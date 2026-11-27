@@ -4,6 +4,26 @@
 
 Bộ đánh giá đo chất lượng danh sách kết quả truy xuất, tách biệt với chất lượng câu trả lời của LLM/Agent. Không dùng kết quả do chính retriever tạo ra làm nhãn chuẩn. Qrels phải được người đánh giá gán dựa trên nội dung câu hỏi và nội dung chunk/tài liệu.
 
+## Chạy truy xuất trên Neo4j thật
+
+File câu hỏi khởi tạo có 20 query tiếng Việt/tiếng Anh tại `queries.template.jsonl`. Đây là câu hỏi mẫu để bắt đầu, chưa phải bộ benchmark đã gán nhãn.
+
+1. Sao chép template thành file làm việc và chỉnh câu hỏi nếu cần.
+2. Chạy retriever trên Neo4j đã có DocumentChunk, vector embeddings và index:
+
+```bash
+python scripts/run_hybrid_retrieval.py --queries evaluation/hybrid_rag/queries.template.jsonl --output evaluation/hybrid_rag/runs.jsonl --limit 10
+```
+
+3. Mở `runs.jsonl`, kiểm tra nội dung từng chunk và gán ID liên quan vào qrels. Không gán nhãn chỉ dựa trên score hoặc vị trí xếp hạng.
+4. Chạy evaluator:
+
+```bash
+python scripts/evaluate_hybrid_retrieval.py --qrels evaluation/hybrid_rag/qrels.jsonl --runs evaluation/hybrid_rag/runs.jsonl --k 5 10 --output evaluation/hybrid_rag/report.json
+```
+
+Cần cài dependencies `rag` và `neo4j`, đồng thời cấu hình biến môi trường Neo4j hợp lệ trong file `.env`. Script truy xuất dùng đúng model embedding đã cấu hình khi tạo vector; nếu dùng model hoặc dimension khác với embedding trong Neo4j thì kết quả không hợp lệ hoặc vector query sẽ lỗi. Mặc định là `intfloat/multilingual-e5-small`, dimension 384.
+
 ## Định dạng dữ liệu
 
 Dùng UTF-8 JSONL, mỗi dòng là một JSON object.
