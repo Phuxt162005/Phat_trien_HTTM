@@ -21,7 +21,7 @@ OPTIONAL MATCH (node)-[:SUPPORTED_BY|PART_OF]->(linked_doc:MedicalDocument)
 WITH node, score, rel, neighbor,
      coalesce(linked_doc, CASE WHEN node:MedicalDocument THEN node ELSE null END) AS doc
 OPTIONAL MATCH (doc)-[:CITES_SOURCE|FROM_SOURCE]->(source:KnowledgeSource)
-OPTIONAL MATCH (node)-[:FROM_SOURCE]->(node_source:KnowledgeSource)
+OPTIONAL MATCH (node)-[:CITES_SOURCE|FROM_SOURCE]->(node_source:KnowledgeSource)
 RETURN labels(node) AS labels,
        properties(node) AS entity,
        score AS score,
@@ -159,8 +159,10 @@ class Neo4jGraphRepository:
            doc.url AS url,
            score AS score,
            CASE WHEN source IS NULL THEN null ELSE {
-               name: source.name, publisher: source.publisher,
-               license: source.license, url: source.url
+               name: coalesce(source.name, source.source_name),
+               publisher: source.publisher,
+               license: source.license,
+               url: coalesce(source.url, source.source_url)
            } END AS source
     ORDER BY score DESC
     """
