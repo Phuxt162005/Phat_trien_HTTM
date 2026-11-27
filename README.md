@@ -142,6 +142,28 @@ Kết quả:
 
 Đây là benchmark phát triển mô hình, không phải đánh giá lâm sàng. Không chọn mô hình chỉ theo Accuracy hoặc Minority Recall riêng lẻ; phải xem đầy đủ precision/recall/F1 của từng lớp và confusion matrix.
 
+### Điều chỉnh điểm xác suất theo từng lớp cho HistGradientBoosting
+
+Sau benchmark, cấu hình HistGradientBoosting + random oversampling 50% là cấu hình có Macro F1 validation cao nhất trong nhóm ứng viên đã thử. Có thể thử điều chỉnh điểm lớp thiểu số bằng cách nhân xác suất lớp đó với hệ số rồi lấy `argmax` trên cả ba lớp.
+
+Chạy:
+
+```bash
+python scripts/tune_classwise_probability.py --dataset diabetes04 --max-iter 120
+```
+
+Quy trình:
+- Fit HistGradientBoosting trên train sau random oversampling 50%.
+- Thử hệ số từ 1.00 đến 12.00, bước 0.25 trên validation.
+- Giữ ứng viên có Macro F1 không giảm quá 0.02 so với baseline và Recall của từng lớp còn lại không thấp hơn 90% baseline.
+- Trong nhóm đạt điều kiện, chọn theo F1 lớp thiểu số, sau đó Macro F1 và Precision. Nếu không có ứng viên đạt điều kiện, fallback ưu tiên Macro F1.
+- Fit lại mô hình cuối trên train+validation sau oversampling 50%.
+- Không truy cập test và không tạo test metrics.
+
+Báo cáo lưu tại `models/diabetes04/classwise_probability_tuning.json`; mô hình lưu tại `models/diabetes04/hist_gradient_boosting_classwise.joblib`. Khi suy luận, phải dùng hệ số trong báo cáo với hàm `apply_class_score_multiplier` và giữ cả ba lớp trong phép `argmax`; gọi `predict()` trực tiếp sẽ không áp dụng hệ số.
+
+Hệ số chỉ thay đổi quyết định phân lớp, không cải thiện calibration. Đây là thí nghiệm phát triển mô hình, không phải xác nhận lâm sàng. Tập test đã được xem trong các thí nghiệm trước nên tiếp tục được giữ ngoài quá trình lựa chọn.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
 Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
