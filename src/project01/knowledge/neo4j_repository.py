@@ -20,7 +20,7 @@ WHERE neighbor IS NOT NULL
 OPTIONAL MATCH (node)-[:SUPPORTED_BY|PART_OF]->(linked_doc:MedicalDocument)
 WITH node, score, rel, neighbor,
      coalesce(linked_doc, CASE WHEN node:MedicalDocument THEN node ELSE null END) AS doc
-OPTIONAL MATCH (doc)-[:FROM_SOURCE]->(source:KnowledgeSource)
+OPTIONAL MATCH (doc)-[:CITES_SOURCE|FROM_SOURCE]->(source:KnowledgeSource)
 OPTIONAL MATCH (node)-[:FROM_SOURCE]->(node_source:KnowledgeSource)
 RETURN labels(node) AS labels,
        properties(node) AS entity,
@@ -36,8 +36,8 @@ RETURN labels(node) AS labels,
            page_start: properties(node).page_start, page_end: properties(node).page_end,
            chunk_id: CASE WHEN node:DocumentChunk THEN node.id ELSE null END,
            source: CASE WHEN source IS NULL AND node_source IS NULL THEN null ELSE {
-               name: coalesce(source.name, node_source.name),
-               url: coalesce(source.url, node_source.url),
+               name: coalesce(source.name, source.source_name, node_source.name, node_source.source_name),
+               url: coalesce(source.url, source.source_url, node_source.url, node_source.source_url),
                publisher: coalesce(source.publisher, node_source.publisher),
                license: coalesce(source.license, node_source.license)
            } END
@@ -112,7 +112,7 @@ class Neo4jGraphRepository:
         WITH node, score
         WHERE node:DocumentChunk
         OPTIONAL MATCH (node)-[:PART_OF]->(doc:MedicalDocument)
-        OPTIONAL MATCH (doc)-[:FROM_SOURCE]->(source:KnowledgeSource)
+        OPTIONAL MATCH (doc)-[:CITES_SOURCE|FROM_SOURCE]->(source:KnowledgeSource)
         RETURN node.id AS id,
                node.text AS text,
                node.chunk_index AS chunk_index,
@@ -123,8 +123,10 @@ class Neo4jGraphRepository:
                doc.url AS url,
                score AS score,
                CASE WHEN source IS NULL THEN null ELSE {
-                   name: source.name, publisher: source.publisher,
-                   license: source.license, url: source.url
+                   name: coalesce(source.name, source.source_name),
+                   publisher: source.publisher,
+                   license: source.license,
+                   url: coalesce(source.url, source.source_url)
                } END AS source
         ORDER BY score DESC
         LIMIT $limit
@@ -146,7 +148,7 @@ class Neo4jGraphRepository:
         LIMIT $limit
     ) SCORE AS score
     OPTIONAL MATCH (node)-[:PART_OF]->(doc:MedicalDocument)
-    OPTIONAL MATCH (doc)-[:FROM_SOURCE]->(source:KnowledgeSource)
+    OPTIONAL MATCH (doc)-[:CITES_SOURCE|FROM_SOURCE]->(source:KnowledgeSource)
     RETURN node.id AS id,
            node.text AS text,
            node.chunk_index AS chunk_index,
