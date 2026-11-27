@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import re
 from pathlib import Path
 from typing import Any
@@ -168,14 +169,22 @@ class Neo4jGraphRepository:
             return int(record["stored"]) if record else 0
 
     def vector_search(self, embedding: list[float], limit: int = 8) -> list[dict[str, Any]]:
-        if not embedding or any(not isinstance(value, (int, float)) for value in embedding):
+        if embedding is None:
             raise ValueError("embedding phải là danh sách số không rỗng.")
+        try:
+            # Accept Python sequences and NumPy arrays without evaluating an
+            # ndarray's ambiguous truth value.
+            values = [float(value) for value in embedding]
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise ValueError("embedding phải là vector một chiều gồm các giá trị số.") from exc
+        if not values or not all(math.isfinite(value) for value in values):
+            raise ValueError("embedding phải là vector số hữu hạn, không rỗng.")
         if not 1 <= int(limit) <= 75:
             raise ValueError("limit phải nằm trong khoảng 1..75.")
         parameters = {
             "index_name": self.VECTOR_INDEX,
             "limit": int(limit),
-            "embedding": [float(value) for value in embedding],
+            "embedding": values,
         }
         with self.driver.session(database=self.database) as session:
             result = session.run(self.VECTOR_SEARCH_QUERY, parameters)
