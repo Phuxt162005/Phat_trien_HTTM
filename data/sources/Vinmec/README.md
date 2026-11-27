@@ -90,3 +90,33 @@ python scripts/ingest_documents.py data/documents/Vinmec --source-name "Vinmec" 
 ```
 
 Lệnh trên chỉ tạo JSONL chunk, **không ghi Neo4j**. Chỉ thêm `--neo4j` sau khi đã kiểm tra nội dung và metadata. Với dữ liệu nhiều nguồn/quyền khác nhau, nên ingest theo từng tài liệu hoặc nhóm có cùng điều kiện quyền thay vì dùng chung một license.
+
+
+## Ingestion Vinmec theo metadata riêng từng bài
+
+Không dùng `scripts/ingest_documents.py` trên cả thư mục Vinmec nếu metadata từng bài khác nhau, vì lệnh tổng quát nhận một bộ metadata chung. Dùng script chuyên biệt:
+
+```powershell
+python scripts/ingest_vinmec_documents.py --input data/documents/Vinmec --output data/processed/vinmec_chunks.jsonl
+```
+
+Script này:
+- Đọc riêng `metadata.json` và `content.md` trong từng thư mục bài.
+- Giữ canonical URL, title, publisher và rights note tương ứng từng tài liệu.
+- Bỏ qua bài thiếu metadata/quyền lưu trữ hoặc thiếu nội dung.
+- Khử trùng theo SHA-256 nội dung.
+- Mặc định chỉ tạo JSONL; không kết nối Neo4j.
+
+Sau khi xem báo cáo và kiểm tra JSONL, mới ghi vào Neo4j:
+
+```powershell
+python scripts/ingest_vinmec_documents.py --input data/documents/Vinmec --output data/processed/vinmec_chunks.jsonl --neo4j
+```
+
+Embedding là bước riêng, chạy sau khi đã xác nhận số chunk được lưu trong Neo4j:
+
+```powershell
+python scripts/embed_neo4j_documents.py --create-index --limit 100000 --batch-size 32
+```
+
+Không chạy embedding khi chưa có chunk đang chờ embedding. Báo cáo ingestion phải được xem trước; số chunk không đại diện cho số facts lâm sàng. Script không tạo clinical facts.
