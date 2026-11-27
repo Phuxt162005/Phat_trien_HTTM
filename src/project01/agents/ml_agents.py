@@ -140,7 +140,8 @@ class SafetyReviewAgent(BaseAgent):
         super().__init__("SafetyReviewAgent")
 
     def run(self, consensus_result: AgentResult, explanation_result: AgentResult,
-            evaluation_result: AgentResult) -> AgentResult:
+            evaluation_result: AgentResult,
+            deep_learning_result: AgentResult | None = None) -> AgentResult:
         probabilities = np.asarray(consensus_result.data["probabilities"], dtype=float)
         predictions = np.asarray(consensus_result.data["predictions"])
         valid = (
@@ -150,6 +151,16 @@ class SafetyReviewAgent(BaseAgent):
             and np.allclose(probabilities.sum(axis=1), 1.0, atol=1e-5)
             and len(predictions) == len(probabilities)
         )
+        if deep_learning_result is not None:
+            dl_probabilities = np.asarray(
+                deep_learning_result.data["output"].test_probabilities, dtype=float
+            )
+            valid = valid and (
+                dl_probabilities.ndim == 2
+                and np.isfinite(dl_probabilities).all()
+                and (dl_probabilities >= 0).all()
+                and np.allclose(dl_probabilities.sum(axis=1), 1.0, atol=1e-5)
+            )
         if not valid:
             return AgentResult(
                 self.name, "failed",
@@ -236,16 +247,12 @@ class MLCoordinatorAgent(BaseAgent):
             evaluation = self.evaluation.run(consensus, prepared)
             self._record_result(explanation)
             self._record_result(evaluation)
-            safety = self.safety.run(consensus, explanation, evaluation)
-            self._record_result(safety)
-            if safety.status != "success":
-                return AgentResult(self.name, "failed", {"trace": self.agent_log},
-                                   errors=safety.errors)
 
             outputs = {
                 "logistic_regression": model_a.data["output"],
                 "random_forest": model_b.data["output"],
             }
+            deep_learning_result = None
             deep_learning = None
             if include_deep_learning:
                 deep_learning_result = self.deep_learning_agent.run(prepared)
@@ -254,6 +261,14 @@ class MLCoordinatorAgent(BaseAgent):
                 metrics_dl = deep_learning_result.data["metrics"]
             else:
                 metrics_dl = None
+
+            safety = self.safety.run(
+                consensus, explanation, evaluation, deep_learning_result
+            )
+            self._record_result(safety)
+            if safety.status != "success":
+                return AgentResult(self.name, "failed", {"trace": self.agent_log},
+                                   errors=safety.errors)
 
             metrics = {
                 "individual": {
