@@ -98,3 +98,32 @@ def test_import_saves_article_and_metadata_with_permission(tmp_path, monkeypatch
     assert metadata["rights_note"] == "Permission verified by project owner"
     assert "Long enough article content" in body
     assert (tmp_path / "documents" / "extraction_report.json").exists()
+
+
+
+def test_import_rejects_redirected_category_or_missing_heading(tmp_path, monkeypatch):
+    import project01.knowledge.web_source_ingestion as importer
+
+    audit = tmp_path / "audit.json"
+    audit.write_text(json.dumps({"results": [
+        {
+            "status": "ok", "page_valid": True,
+            "catalog_id": "VIN-002",
+            "url": "https://www.vinmec.com/vie/a",
+        }
+    ]}), encoding="utf-8")
+    html = (
+        "<html><head><title>Vinmec</title></head><body>"
+        "<main><p>" + ("Generic listing text. " * 80) + "</p></main>"
+        "</body></html>"
+    )
+    monkeypatch.setattr(importer, "_robots_allowed", lambda *_args: True)
+    monkeypatch.setattr(importer, "_fetch", lambda *_args: (
+        html, "https://www.vinmec.com/vie/bai-viet", 200
+    ))
+    report = importer.import_vinmec_articles(
+        audit, tmp_path / "documents",
+        rights_note="Permission verified", delay=0,
+    )
+    assert report["status_counts"] == {"invalid_or_insufficient_article": 1}
+    assert not list((tmp_path / "documents").glob("VIN-002-*/content.md"))
