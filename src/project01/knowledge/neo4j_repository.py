@@ -55,10 +55,34 @@ RETURN labels(node) AS labels,
 
 
 def _lucene_terms(text: str) -> str:
+    """Build a recall-oriented Lucene query from meaningful words.
+
+    Requiring every token with AND made natural-language questions (especially
+    Vietnamese questions with stop words) return no lexical candidates. OR lets
+    Neo4j rank documents matching informative terms; the result limit and
+    full-text score still control the candidate set.
+    """
     terms = re.findall(r"[\wÀ-ỹ]+", text, flags=re.UNICODE)
-    if not terms:
+    stop_words = {
+        "la", "gì", "gi", "của", "cua", "và", "va", "các", "cac", "những",
+        "nhung", "cho", "một", "mot", "trong", "được", "duoc", "theo", "về",
+        "ve", "nào", "nao", "như", "nhu", "hay", "có", "co", "không", "khong",
+        "thế", "the", "what", "is", "are", "the", "of", "for", "and", "to",
+        "a", "an", "with", "in", "on", "how", "does", "do", "can", "i", "you",
+    }
+    filtered = []
+    seen = set()
+    for term in terms:
+        normalized = term.casefold()
+        if normalized in stop_words or normalized in seen:
+            continue
+        seen.add(normalized)
+        filtered.append(term)
+    if not filtered:
+        filtered = terms
+    if not filtered:
         return ""
-    return " AND ".join('"' + term.replace('"', '') + '"' for term in terms[:12])
+    return " OR ".join('"' + term.replace('"', '') + '"' for term in filtered[:12])
 
 
 class Neo4jGraphRepository:
