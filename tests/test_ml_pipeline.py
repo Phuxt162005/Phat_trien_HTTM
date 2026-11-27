@@ -24,6 +24,7 @@ def test_preprocessing_splits_and_fits_without_test_leakage():
     assert len(prepared.X_train) + len(prepared.X_validation) + len(prepared.X_test) == len(frame)
     assert len(prepared.X_test) > 0
     assert prepared.profile["target"] == "diabetes"
+    assert prepared.profile["task_kind"] == "binary"
 
 
 def test_unlabeled_dataset_is_rejected_by_supervised_preprocessing():
@@ -38,7 +39,7 @@ def test_unlabeled_dataset_is_rejected_by_supervised_preprocessing():
 
 def test_baseline_models_soft_voting_and_metrics():
     frame = make_labeled_frame(300)
-    config = DatasetConfig("toy", "toy.csv", "diabetes", "binary")
+    config = DatasetConfig("toy", "toy.csv", "diabetes", "binary_classification")
     prepared = prepare_dataset(frame, config)
     outputs = train_baseline_models(prepared, rf_estimators=12, n_jobs=1)
     voting = soft_voting(outputs)
@@ -51,3 +52,18 @@ def test_baseline_models_soft_voting_and_metrics():
     assert 0 <= metrics["accuracy"] <= 1
     assert 0 <= metrics["roc_auc"] <= 1
     assert np.allclose(voting["probabilities"].sum(axis=1), 1.0)
+
+
+
+def test_multiclass_metrics_include_macro_ovr_auc():
+    y_true = np.array([0, 1, 2, 0, 1, 2])
+    probabilities = np.array([
+        [0.8, 0.1, 0.1], [0.1, 0.8, 0.1], [0.1, 0.1, 0.8],
+        [0.7, 0.2, 0.1], [0.2, 0.7, 0.1], [0.1, 0.2, 0.7],
+    ])
+    predictions = np.array([0, 1, 2, 0, 1, 2])
+    metrics = evaluate_predictions(
+        y_true, predictions, probabilities, [0, 1, 2], "multiclass"
+    )
+    assert metrics["confusion_matrix"] == [[2, 0, 0], [0, 2, 0], [0, 0, 2]]
+    assert 0 <= metrics["roc_auc_ovr_macro"] <= 1
