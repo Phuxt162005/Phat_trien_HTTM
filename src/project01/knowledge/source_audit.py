@@ -7,7 +7,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
-URL_RE = re.compile(r"https?://[^\\s|)]+", re.IGNORECASE)
+URL_RE = re.compile(r"https?://[^\s|)]+", re.IGNORECASE)
 GENERIC_TITLES = {"bai viet", "vinmec", "trang chu", "suc khoe tong hop"}
 
 
