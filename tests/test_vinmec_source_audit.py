@@ -20,6 +20,8 @@ def test_catalog_urls_extracts_unique_urls_and_metadata():
     assert records[0]["catalog_id"] == "VIN-001"
     assert records[0]["catalog_title"] == "Bài A"
     assert records[1]["topic"] == "Tim mạch"
+    with_s = catalog_urls("| VIN-004 | Bài có chữ s | Tổng quan | https://www.vinmec.com/vie/bai-viet/suc-khoe-nguoi-benh-vi |")
+    assert with_s[0]["url"].endswith("/suc-khoe-nguoi-benh-vi")
 
 
 def test_metadata_parser_reads_title_canonical_and_dates():
