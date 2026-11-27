@@ -16,6 +16,7 @@ data/processed/**
 data/vector_store/**
 models/**
 !models/.gitkeep
+!models/**/*.json
 logs/**
 !logs/.gitkeep
 *.log
