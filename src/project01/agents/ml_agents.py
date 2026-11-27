@@ -189,7 +189,8 @@ class MLCoordinatorAgent(BaseAgent):
         self.agent_log: list[dict[str, str]] = []
 
     def run(self, frame: pd.DataFrame, config: DatasetConfig,
-            artifact_dir: Path | None = None) -> AgentResult:
+            artifact_dir: Path | None = None,
+            include_deep_learning: bool = False) -> AgentResult:
         self.message_log, self.agent_log = [], []
         if not config.has_target or not config.target:
             return AgentResult(
@@ -219,6 +220,18 @@ class MLCoordinatorAgent(BaseAgent):
                 "logistic_regression": model_a.data["output"],
                 "random_forest": model_b.data["output"],
             }
+            deep_learning = None
+            if include_deep_learning:
+                from ..ml.deep_learning import train_deep_learning_model
+                deep_learning = train_deep_learning_model(prepared)
+                metrics_dl = evaluate_predictions(
+                    prepared.y_test, deep_learning.test_predictions,
+                    deep_learning.test_probabilities, deep_learning.classes,
+                    prepared.profile["task_kind"],
+                )
+            else:
+                metrics_dl = None
+
             metrics = {
                 "individual": {
                     name: evaluate_predictions(
@@ -230,17 +243,37 @@ class MLCoordinatorAgent(BaseAgent):
                 },
                 "soft_voting": evaluation.data,
             }
+            if metrics_dl is not None:
+                metrics["deep_learning"] = metrics_dl
             if artifact_dir is not None:
                 target_dir = Path(artifact_dir) / config.name
                 target_dir.mkdir(parents=True, exist_ok=True)
                 for name, output in outputs.items():
                     joblib.dump(output.model, target_dir / f"{name}.joblib")
+                if deep_learning is not None:
+                    import torch
+                    torch.save(
+                        deep_learning.model.state_dict(),
+                        target_dir / "deep_learning_mlp.pt",
+                    )
+                    joblib.dump(
+                        deep_learning.preprocessor,
+                        target_dir / "deep_learning_preprocessor.joblib",
+                    )
                 manifest = {
                     "dataset": config.name,
                     "task": config.task,
                     "target": config.target,
                     "profile": prepared.profile,
                     "metrics": metrics,
+                    "deep_learning": None if deep_learning is None else {
+                        "validation_score": deep_learning.validation_score,
+                        "validation_metric": deep_learning.validation_metric,
+                        "best_epoch": deep_learning.best_epoch,
+                        "epochs_ran": deep_learning.epochs_ran,
+                        "stopped_early": deep_learning.stopped_early,
+                        "classes": [str(value) for value in deep_learning.classes],
+                    },
                     "preprocessing": {
                         "numeric_columns": prepared.numeric_columns,
                         "categorical_columns": prepared.categorical_columns,
@@ -268,6 +301,7 @@ class MLCoordinatorAgent(BaseAgent):
                     "consensus": consensus.data,
                     "explanation": explanation.data,
                     "metrics": metrics,
+                    "deep_learning": deep_learning,
                     "safety_review": safety.data,
                     "agent_log": self.agent_log,
                     "message_log": self.message_log,
