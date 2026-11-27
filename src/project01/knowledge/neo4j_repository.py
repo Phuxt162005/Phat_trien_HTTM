@@ -31,8 +31,8 @@ RETURN labels(node) AS labels,
        } END)[0..10] AS related,
        collect(DISTINCT CASE WHEN doc IS NULL THEN null ELSE {
            document_id: doc.id, title: doc.title, url: doc.url,
-           page: coalesce(node.page_start, doc.page),
-           page_start: node.page_start, page_end: node.page_end,
+           page: coalesce(properties(node).page_start, doc.page),
+           page_start: properties(node).page_start, page_end: properties(node).page_end,
            chunk_id: CASE WHEN node:DocumentChunk THEN node.id ELSE null END,
            source: CASE WHEN source IS NULL AND node_source IS NULL THEN null ELSE {
                name: coalesce(source.name, node_source.name),
@@ -98,8 +98,12 @@ class Neo4jGraphRepository:
 
     VECTOR_INDEX = "diabetes_document_chunk_vector"
     VECTOR_SEARCH_QUERY = """
-    CALL db.index.vector.queryNodes($index_name, $limit, $embedding)
-    YIELD node, score
+    MATCH (node:DocumentChunk)
+    SEARCH node IN (
+        VECTOR INDEX diabetes_document_chunk_vector
+        FOR $embedding
+        LIMIT $limit
+    ) SCORE AS score
     OPTIONAL MATCH (node)-[:PART_OF]->(doc:MedicalDocument)
     OPTIONAL MATCH (doc)-[:FROM_SOURCE]->(source:KnowledgeSource)
     RETURN node.id AS id,
