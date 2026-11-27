@@ -104,7 +104,9 @@ def test_neo4j_writer_uses_parameterized_idempotent_merge():
     assert writer.upsert([item]) == 1
     cypher, params = repository.driver.session_instance.calls[0]
     assert "MERGE (source:KnowledgeSource" in cypher
+    assert "source.source_id = row.source_id" in cypher
     assert "MERGE (doc:MedicalDocument" in cypher
+    assert "MERGE (doc)-[:CITES_SOURCE]->(source)" in cypher
     assert "MERGE (chunk:DocumentChunk" in cypher
     assert params["rows"][0]["id"] == "chunk_1"
     with pytest.raises(ValueError):
