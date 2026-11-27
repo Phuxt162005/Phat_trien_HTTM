@@ -97,6 +97,7 @@ def prepare_dataset(
     profile = {
         "dataset": config.name,
         "task": config.task,
+        "task_kind": "binary" if "binary" in config.task.lower() else "multiclass",
         "target": config.target,
         "classes": sorted(y.dropna().unique().tolist()),
         "class_distribution": {str(k): int(v) for k, v in y.value_counts().items()},
