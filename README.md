@@ -84,15 +84,22 @@ python scripts/compare_imbalance.py --dataset diabetes04 --rf-estimators 120
 
 Các phương án được lựa chọn bằng Macro F1 trên validation; Recall của lớp thiểu số chỉ dùng để phá hòa. Sau khi chọn xong, mô hình được huấn luyện lại trên train+validation và tập test chỉ được đánh giá một lần. Báo cáo được lưu tại `models/diabetes04/imbalance_comparison.json`, mô hình được chọn tại `models/diabetes04/random_forest_selected_imbalance.joblib`. Đây là thí nghiệm riêng, không tự động ghi đè kết quả pipeline Multi-Agent hiện tại.
 
-### Điều chỉnh ngưỡng dự đoán cho lớp thiểu số
+### Điều chỉnh điểm số dự đoán cho lớp thiểu số (multiclass)
 
-Sau khi so sánh class weighting và oversampling, có thể chạy thí nghiệm điều chỉnh threshold cho lớp thiểu số. Mô hình Random Forest dùng `class_weight=balanced_subsample`; threshold được chọn bằng validation theo thứ tự ưu tiên F1 lớp thiểu số, Macro F1 và Precision lớp thiểu số.
+Thí nghiệm này điều chỉnh điểm xác suất của lớp thiểu số bằng một hệ số nhân, sau đó vẫn dùng `argmax` trên **toàn bộ các lớp**. Vì vậy, lớp 0, lớp 1 và lớp 2 tiếp tục cạnh tranh với nhau; không dùng quy tắc one-vs-rest gán mọi mẫu không thuộc lớp thiểu số thành lớp 0.
+
+- Hệ số được chọn trên validation, không dùng test để chọn.
+- Ưu tiên F1 lớp thiểu số trong nhóm ứng viên đáp ứng đồng thời hai điều kiện bảo toàn: Macro F1 không giảm quá 0.03 so với baseline và Recall của từng lớp còn lại không thấp hơn 75% baseline.
+- Nếu không có ứng viên đáp ứng điều kiện, fallback chọn theo Macro F1 trước, sau đó mới xét F1 lớp thiểu số.
+- Script hiện tại chỉ đánh giá trên validation và **không đọc tập test**. Tập test đã được xem trong các lần thử trước nên không còn được xem là holdout hoàn toàn độc lập; không tiếp tục dùng nó để lựa chọn hệ số.
+
+Chạy:
 
 ```bash
 python scripts/tune_minority_threshold.py --dataset diabetes04 --rf-estimators 120
 ```
 
-Báo cáo lưu tại `models/diabetes04/minority_threshold_tuning.json`; mô hình lưu tại `models/diabetes04/random_forest_minority_threshold.joblib`. Tập test chỉ được đánh giá một lần sau khi threshold đã được chọn. Cần xem đồng thời Precision, Recall, F1 lớp thiểu số và Macro F1; không chọn threshold chỉ để tăng Recall vì có thể làm tăng mạnh false positives. Threshold tuning thay đổi quy tắc ra quyết định, không tự cải thiện chất lượng xác suất hay chứng minh giá trị lâm sàng.
+Báo cáo validation lưu tại `models/diabetes04/minority_threshold_tuning.json`; mô hình Random Forest đã fit trên train+validation lưu tại `models/diabetes04/random_forest_minority_factor.joblib`. Báo cáo ghi rõ hệ số được chọn, metrics từng lớp, các ứng viên và trạng thái không đánh giá test. Khi triển khai dự đoán, cần áp dụng đúng hệ số đã chọn lên cột xác suất tương ứng với nhãn lớp thiểu số trước khi lấy `argmax`; không gọi `predict()` trực tiếp nếu muốn dùng quy tắc đã tuning. Hệ số không cải thiện calibration và không chứng minh giá trị lâm sàng.
 
 ## Những phần chưa tích hợp hoàn chỉnh
 
