@@ -30,9 +30,11 @@ class FakeSession:
     def __exit__(self, *args):
         return False
 
-    def run(self, query, **params):
-        self.calls.append((query, params))
-        if "RETURN 1 AS ok" in query:
+    def run(self, cypher, parameters=None, **kwargs):
+        params = dict(parameters or {})
+        params.update(kwargs)
+        self.calls.append((cypher, params))
+        if "RETURN 1 AS ok" in cypher:
             return FakeResult([FakeRecord(ok=1)])
         return FakeResult(self.records)
 
@@ -66,10 +68,13 @@ def test_repository_health_and_search_are_parameterized():
     assert repository.health_check() == {"connected": True, "database": "neo4j"}
     results = repository.search("diabetes", limit=3)
     assert results[0]["entity"]["id"] == "d1"
-    query, params = driver.session_instance.calls[-1]
-    assert "db.index.fulltext.queryNodes" in query
-    assert params["query"] == '"diabetes"'
-    assert params["limit"] == 3
+    cypher, params = driver.session_instance.calls[-1]
+    assert "db.index.fulltext.queryNodes" in cypher
+    assert params == {
+        "index_name": "diabetes_knowledge_fulltext",
+        "query": '"diabetes"',
+        "limit": 3,
+    }
     with pytest.raises(ValueError):
         repository.search(" ")
     with pytest.raises(ValueError):

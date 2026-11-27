@@ -75,13 +75,15 @@ class Neo4jGraphRepository:
         lucene_query = _lucene_terms(query)
         if not lucene_query:
             return []
+        parameters = {
+            "index_name": FULLTEXT_INDEX,
+            "query": lucene_query,
+            "limit": int(limit),
+        }
         with self.driver.session(database=self.database) as session:
-            result = session.run(
-                SEARCH_QUERY,
-                index_name=FULLTEXT_INDEX,
-                query=lucene_query,
-                limit=int(limit),
-            )
+            # Pass parameters as a mapping to avoid colliding with Session.run's
+            # positional statement argument.
+            result = session.run(SEARCH_QUERY, parameters)
             return [record.data() for record in result]
 
     def apply_schema(self, schema_path: str | Path) -> int:
