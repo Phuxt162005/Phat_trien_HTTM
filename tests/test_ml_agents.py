@@ -47,3 +47,21 @@ def test_ml_coordinator_rejects_unlabeled_dataset():
     )
     assert result.status == "failed"
     assert "không có target" in result.errors[0]
+
+
+
+def test_ml_coordinator_supports_multiclass_dataset():
+    rng = np.random.default_rng(37)
+    n = 240
+    age = rng.normal(50, 12, n)
+    bmi = rng.normal(28, 5, n)
+    target = np.digitize(age + bmi + rng.normal(0, 5, n), [70, 85])
+    frame = pd.DataFrame({"age": age, "bmi": bmi, "Diabetes_012": target})
+    config = DatasetConfig(
+        "toy_multiclass", "toy.csv", "Diabetes_012", "multiclass_classification"
+    )
+    result = MLCoordinatorAgent(rf_estimators=6, n_jobs=1).run(frame, config)
+    assert result.status == "success", result.errors
+    assert result.data["metrics"]["soft_voting"]["confusion_matrix"] is not None
+    assert "roc_auc_ovr_macro" in result.data["metrics"]["soft_voting"]
+    assert len(result.data["consensus"]["classes"]) == 3
