@@ -1,0 +1,293 @@
+{
+  "diabetes01": {
+    "agent": "CoordinatorAgent",
+    "status": "warning",
+    "data": {
+      "dataset": "diabetes01",
+      "task": "binary_classification",
+      "role": "original_supervised",
+      "has_target": true,
+      "target": "diabetes",
+      "shape": [
+        100000,
+        9
+      ],
+      "class_distribution": {
+        "0": 91500,
+        "1": 8500
+      },
+      "quality": {
+        "rows": 100000,
+        "columns": 9,
+        "column_names": [
+          "gender",
+          "age",
+          "hypertension",
+          "heart_disease",
+          "smoking_history",
+          "bmi",
+          "HbA1c_level",
+          "blood_glucose_level",
+          "diabetes"
+        ],
+        "dtypes": {
+          "gender": "object",
+          "age": "float64",
+          "hypertension": "int64",
+          "heart_disease": "int64",
+          "smoking_history": "object",
+          "bmi": "float64",
+          "HbA1c_level": "float64",
+          "blood_glucose_level": "int64",
+          "diabetes": "int64"
+        },
+        "missing_cells": 0,
+        "missing_by_column": {},
+        "missing_percent_by_column": {},
+        "duplicate_rows": 3854,
+        "constant_columns": [],
+        "duplicate_columns": [],
+        "infinite_values_by_column": {},
+        "target": "diabetes",
+        "target_exists": true,
+        "target_distribution": {
+          "0": 91500,
+          "1": 8500
+        }
+      },
+      "rule_review": {
+        "findings": [
+          {
+            "level": "warning",
+            "code": "DUPLICATE_ROWS",
+            "message": "Phát hiện bản ghi trùng; cần đánh giá trước khi loại bỏ, không tự động xóa."
+          }
+        ],
+        "passed": true
+      },
+      "trace": [
+        {
+          "step": "load_dataset",
+          "status": "success",
+          "dataset": "diabetes01"
+        },
+        {
+          "step": "PatientDataAgent",
+          "status": "warning"
+        },
+        {
+          "step": "RuleBasedAgent",
+          "status": "warning"
+        }
+      ]
+    },
+    "messages": [],
+    "errors": []
+  },
+  "diabetes02": {
+    "agent": "CoordinatorAgent",
+    "status": "warning",
+    "data": {
+      "dataset": "diabetes02",
+      "task": "unlabeled_health_tabular",
+      "role": "external_unlabeled",
+      "has_target": false,
+      "target": null,
+      "shape": [
+        50000,
+        12
+      ],
+      "class_distribution": null,
+      "quality": {
+        "rows": 50000,
+        "columns": 12,
+        "column_names": [
+          "Age",
+          "Gender",
+          "BMI",
+          "Blood_Glucose",
+          "HbA1c",
+          "Fasting_Blood_Sugar",
+          "Blood_Pressure_Systolic",
+          "Blood_Pressure_Diastolic",
+          "Heart_Rate",
+          "Smoking_Status",
+          "Hypertension",
+          "Heart_Disease"
+        ],
+        "dtypes": {
+          "Age": "float64",
+          "Gender": "object",
+          "BMI": "float64",
+          "Blood_Glucose": "float64",
+          "HbA1c": "float64",
+          "Fasting_Blood_Sugar": "float64",
+          "Blood_Pressure_Systolic": "int64",
+          "Blood_Pressure_Diastolic": "int64",
+          "Heart_Rate": "int64",
+          "Smoking_Status": "object",
+          "Hypertension": "object",
+          "Heart_Disease": "object"
+        },
+        "missing_cells": 3430,
+        "missing_by_column": {
+          "Age": 497,
+          "Blood_Glucose": 959,
+          "HbA1c": 1974
+        },
+        "missing_percent_by_column": {
+          "Age": 0.994,
+          "Blood_Glucose": 1.918,
+          "HbA1c": 3.948
+        },
+        "duplicate_rows": 0,
+        "constant_columns": [],
+        "duplicate_columns": [],
+        "infinite_values_by_column": {},
+        "target": null,
+        "target_exists": null,
+        "target_distribution": null
+      },
+      "rule_review": {
+        "findings": [
+          {
+            "level": "warning",
+            "code": "MISSING_VALUES",
+            "message": "Dữ liệu có giá trị thiếu; cần xử lý trong pipeline và chỉ fit phép biến đổi trên tập train."
+          }
+        ],
+        "passed": true
+      },
+      "trace": [
+        {
+          "step": "load_dataset",
+          "status": "success",
+          "dataset": "diabetes02"
+        },
+        {
+          "step": "PatientDataAgent",
+          "status": "warning"
+        },
+        {
+          "step": "RuleBasedAgent",
+          "status": "warning"
+        }
+      ]
+    },
+    "messages": [],
+    "errors": []
+  },
+  "diabetes04": {
+    "agent": "CoordinatorAgent",
+    "status": "warning",
+    "data": {
+      "dataset": "diabetes04",
+      "task": "multiclass_classification",
+      "role": "original_supervised",
+      "has_target": true,
+      "target": "Diabetes_012",
+      "shape": [
+        253680,
+        22
+      ],
+      "class_distribution": {
+        "0.0": 213703,
+        "2.0": 35346,
+        "1.0": 4631
+      },
+      "quality": {
+        "rows": 253680,
+        "columns": 22,
+        "column_names": [
+          "Diabetes_012",
+          "HighBP",
+          "HighChol",
+          "CholCheck",
+          "BMI",
+          "Smoker",
+          "Stroke",
+          "HeartDiseaseorAttack",
+          "PhysActivity",
+          "Fruits",
+          "Veggies",
+          "HvyAlcoholConsump",
+          "AnyHealthcare",
+          "NoDocbcCost",
+          "GenHlth",
+          "MentHlth",
+          "PhysHlth",
+          "DiffWalk",
+          "Sex",
+          "Age",
+          "Education",
+          "Income"
+        ],
+        "dtypes": {
+          "Diabetes_012": "float64",
+          "HighBP": "float64",
+          "HighChol": "float64",
+          "CholCheck": "float64",
+          "BMI": "float64",
+          "Smoker": "float64",
+          "Stroke": "float64",
+          "HeartDiseaseorAttack": "float64",
+          "PhysActivity": "float64",
+          "Fruits": "float64",
+          "Veggies": "float64",
+          "HvyAlcoholConsump": "float64",
+          "AnyHealthcare": "float64",
+          "NoDocbcCost": "float64",
+          "GenHlth": "float64",
+          "MentHlth": "float64",
+          "PhysHlth": "float64",
+          "DiffWalk": "float64",
+          "Sex": "float64",
+          "Age": "float64",
+          "Education": "float64",
+          "Income": "float64"
+        },
+        "missing_cells": 0,
+        "missing_by_column": {},
+        "missing_percent_by_column": {},
+        "duplicate_rows": 23899,
+        "constant_columns": [],
+        "duplicate_columns": [],
+        "infinite_values_by_column": {},
+        "target": "Diabetes_012",
+        "target_exists": true,
+        "target_distribution": {
+          "0.0": 213703,
+          "2.0": 35346,
+          "1.0": 4631
+        }
+      },
+      "rule_review": {
+        "findings": [
+          {
+            "level": "warning",
+            "code": "DUPLICATE_ROWS",
+            "message": "Phát hiện bản ghi trùng; cần đánh giá trước khi loại bỏ, không tự động xóa."
+          }
+        ],
+        "passed": true
+      },
+      "trace": [
+        {
+          "step": "load_dataset",
+          "status": "success",
+          "dataset": "diabetes04"
+        },
+        {
+          "step": "PatientDataAgent",
+          "status": "warning"
+        },
+        {
+          "step": "RuleBasedAgent",
+          "status": "warning"
+        }
+      ]
+    },
+    "messages": [],
+    "errors": []
+  }
+}
