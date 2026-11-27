@@ -8,11 +8,10 @@ from datetime import datetime, timezone
 from html import unescape
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 from urllib.robotparser import RobotFileParser
 from urllib.request import Request, urlopen
 
-from bs4 import BeautifulSoup
 
 
 USER_AGENT = "Project01-Diabetes-Source-Importer/1.0"
@@ -66,6 +65,10 @@ def _robots_allowed(url: str, timeout: float) -> bool:
 
 
 def extract_article(html: str) -> dict[str, str | None]:
+    try:
+        from bs4 import BeautifulSoup
+    except ImportError as exc:
+        raise RuntimeError('Cài HTML dependency bằng: pip install -e ".[rag]"') from exc
     soup = BeautifulSoup(html, "html.parser")
     for element in soup(["script", "style", "noscript", "svg", "nav", "footer", "header", "aside"]):
         element.decompose()
@@ -156,7 +159,7 @@ def import_vinmec_articles(
 
             html, final_url, http_status = _fetch(url, timeout)
             article = extract_article(html)
-            canonical = str(article.get("canonical_url") or final_url)
+            canonical = urljoin(final_url, str(article.get("canonical_url") or final_url))
             canonical = _normalise_url(canonical)
             if canonical in seen_canonical:
                 item.update({"status": "duplicate_canonical", "canonical_url": canonical})
