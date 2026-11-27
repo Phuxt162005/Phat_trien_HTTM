@@ -13,7 +13,7 @@ from project01.ml.threshold_tuning import run_minority_threshold_tuning
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Tune minority-class decision threshold on validation data."
+        description="Tune a minority-class score multiplier using validation data only."
     )
     parser.add_argument("--dataset", default="diabetes04")
     parser.add_argument("--data-dir", type=Path, default=DATA_DIR)
@@ -37,25 +37,24 @@ def main() -> int:
     output_dir = args.artifact_dir / config.name
     output_dir.mkdir(parents=True, exist_ok=True)
     report_path = output_dir / "minority_threshold_tuning.json"
-    model_path = output_dir / "random_forest_minority_threshold.joblib"
+    model_path = output_dir / "random_forest_minority_factor.joblib"
     report_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     joblib.dump(model, model_path)
 
-    minority_metrics = report["final_test_metrics"]["classification_report"][
+    minority_metrics = report["selected_validation_metrics"]["classification_report"][
         report["minority_class"]
     ]
     print(json.dumps({
         "dataset": report["dataset"],
         "minority_class": report["minority_class"],
-        "selected_threshold": report["selected_threshold"],
-        "validation_minority_f1": report["selected_validation_metrics"]
-            ["classification_report"][report["minority_class"]]["f1-score"],
-        "test_macro_f1": report["final_test_metrics"]["f1_macro"],
-        "test_minority_precision": minority_metrics["precision"],
-        "test_minority_recall": minority_metrics["recall"],
-        "test_minority_f1": minority_metrics["f1-score"],
+        "selected_factor": report["selected_factor"],
+        "validation_macro_f1": report["selected_validation_metrics"]["f1_macro"],
+        "validation_minority_precision": minority_metrics["precision"],
+        "validation_minority_recall": minority_metrics["recall"],
+        "validation_minority_f1": minority_metrics["f1-score"],
+        "test_evaluation_status": report["test_evaluation_status"],
         "report_path": str(report_path),
         "model_path": str(model_path),
     }, ensure_ascii=False, indent=2))
