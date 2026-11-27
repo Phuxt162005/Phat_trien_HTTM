@@ -1,0 +1,313 @@
+{
+  "dataset": "diabetes04",
+  "task": "multiclass_classification",
+  "target": "Diabetes_012",
+  "profile": {
+    "dataset": "diabetes04",
+    "task": "multiclass_classification",
+    "task_kind": "multiclass",
+    "target": "Diabetes_012",
+    "classes": [
+      0.0,
+      1.0,
+      2.0
+    ],
+    "class_distribution": {
+      "0.0": 213703,
+      "2.0": 35346,
+      "1.0": 4631
+    },
+    "rows": 253680,
+    "feature_count": 21,
+    "train_rows": 177569,
+    "validation_rows": 38059,
+    "test_rows": 38052
+  },
+  "metrics": {
+    "individual": {
+      "logistic_regression": {
+        "accuracy": 0.6471144749290445,
+        "precision_macro": 0.44525204488289644,
+        "recall_macro": 0.5243914911111173,
+        "f1_macro": 0.42702321367958856,
+        "confusion_matrix": [
+          [
+            21313,
+            5353,
+            5389
+          ],
+          [
+            178,
+            227,
+            290
+          ],
+          [
+            925,
+            1293,
+            3084
+          ]
+        ],
+        "classification_report": {
+          "0.0": {
+            "precision": 0.9507940756602427,
+            "recall": 0.6648884729371393,
+            "f1-score": 0.7825448403737769,
+            "support": 32055.0
+          },
+          "1.0": {
+            "precision": 0.0330277899025171,
+            "recall": 0.32661870503597124,
+            "f1-score": 0.059989429175475686,
+            "support": 695.0
+          },
+          "2.0": {
+            "precision": 0.35193426908592945,
+            "recall": 0.5816672953602414,
+            "f1-score": 0.438535371489513,
+            "support": 5302.0
+          },
+          "accuracy": 0.6471144749290445,
+          "macro avg": {
+            "precision": 0.44525204488289644,
+            "recall": 0.5243914911111173,
+            "f1-score": 0.42702321367958856,
+            "support": 38052.0
+          },
+          "weighted avg": {
+            "precision": 0.8505890335321382,
+            "recall": 0.6471144749290445,
+            "f1-score": 0.7214149598206605,
+            "support": 38052.0
+          }
+        },
+        "roc_auc_ovr_macro": 0.7737133999953648
+      },
+      "random_forest": {
+        "accuracy": 0.8180647534952171,
+        "precision_macro": 0.4333422066211836,
+        "recall_macro": 0.4465901105980948,
+        "f1_macro": 0.43971520468064335,
+        "confusion_matrix": [
+          [
+            28787,
+            67,
+            3201
+          ],
+          [
+            471,
+            0,
+            224
+          ],
+          [
+            2945,
+            15,
+            2342
+          ]
+        ],
+        "classification_report": {
+          "0.0": {
+            "precision": 0.8939229264354253,
+            "recall": 0.8980502261737638,
+            "f1-score": 0.8959818232749229,
+            "support": 32055.0
+          },
+          "1.0": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 695.0
+          },
+          "2.0": {
+            "precision": 0.4061036934281255,
+            "recall": 0.44172010562052055,
+            "f1-score": 0.42316379076700694,
+            "support": 5302.0
+          },
+          "accuracy": 0.8180647534952171,
+          "macro avg": {
+            "precision": 0.4333422066211836,
+            "recall": 0.4465901105980948,
+            "f1-score": 0.43971520468064335,
+            "support": 38052.0
+          },
+          "weighted avg": {
+            "precision": 0.8096252809167318,
+            "recall": 0.8180647534952171,
+            "f1-score": 0.8137367750374309,
+            "support": 38052.0
+          }
+        },
+        "roc_auc_ovr_macro": 0.7535241043506143
+      }
+    },
+    "soft_voting": {
+      "accuracy": 0.7895248607169137,
+      "precision_macro": 0.43488861229670367,
+      "recall_macro": 0.4810453170528593,
+      "f1_macro": 0.44615898847991753,
+      "confusion_matrix": [
+        [
+          26845,
+          77,
+          5133
+        ],
+        [
+          383,
+          2,
+          310
+        ],
+        [
+          2078,
+          28,
+          3196
+        ]
+      ],
+      "classification_report": {
+        "0.0": {
+          "precision": 0.9160240223844947,
+          "recall": 0.837466853844954,
+          "f1-score": 0.8749857401280944,
+          "support": 32055.0
+        },
+        "1.0": {
+          "precision": 0.018691588785046728,
+          "recall": 0.0028776978417266188,
+          "f1-score": 0.004987531172069825,
+          "support": 695.0
+        },
+        "2.0": {
+          "precision": 0.3699502257205695,
+          "recall": 0.6027913994718974,
+          "f1-score": 0.45850369413958825,
+          "support": 5302.0
+        },
+        "accuracy": 0.7895248607169137,
+        "macro avg": {
+          "precision": 0.43488861229670367,
+          "recall": 0.4810453170528593,
+          "f1-score": 0.44615898847991753,
+          "support": 38052.0
+        },
+        "weighted avg": {
+          "precision": 0.8235471667326565,
+          "recall": 0.7895248607169137,
+          "f1-score": 0.8010648801718373,
+          "support": 38052.0
+        }
+      },
+      "roc_auc_ovr_macro": 0.7749454550335654
+    },
+    "deep_learning": {
+      "accuracy": 0.6492431409649952,
+      "precision_macro": 0.4445242262470232,
+      "recall_macro": 0.5115227164302502,
+      "f1_macro": 0.42540351534765924,
+      "confusion_matrix": [
+        [
+          21560,
+          5531,
+          4964
+        ],
+        [
+          208,
+          215,
+          272
+        ],
+        [
+          1064,
+          1308,
+          2930
+        ]
+      ],
+      "classification_report": {
+        "0.0": {
+          "precision": 0.9442887175893483,
+          "recall": 0.6725939790984246,
+          "f1-score": 0.7856140798367555,
+          "support": 32055.0
+        },
+        "1.0": {
+          "precision": 0.030479160759852564,
+          "recall": 0.30935251798561153,
+          "f1-score": 0.0554910311007872,
+          "support": 695.0
+        },
+        "2.0": {
+          "precision": 0.35880480039186874,
+          "recall": 0.5526216522067144,
+          "f1-score": 0.4351054351054351,
+          "support": 5302.0
+        },
+        "accuracy": 0.6492431409649952,
+        "macro avg": {
+          "precision": 0.4445242262470232,
+          "recall": 0.5115227164302502,
+          "f1-score": 0.42540351534765924,
+          "support": 38052.0
+        },
+        "weighted avg": {
+          "precision": 0.846019681244937,
+          "recall": 0.6492431409649952,
+          "f1-score": 0.7234404134529396,
+          "support": 38052.0
+        }
+      },
+      "roc_auc_ovr_macro": 0.7624805923550131
+    }
+  },
+  "preprocessing": {
+    "numeric_columns": [
+      "HighBP",
+      "HighChol",
+      "CholCheck",
+      "BMI",
+      "Smoker",
+      "Stroke",
+      "HeartDiseaseorAttack",
+      "PhysActivity",
+      "Fruits",
+      "Veggies",
+      "HvyAlcoholConsump",
+      "AnyHealthcare",
+      "NoDocbcCost",
+      "GenHlth",
+      "MentHlth",
+      "PhysHlth",
+      "DiffWalk",
+      "Sex",
+      "Age",
+      "Education",
+      "Income"
+    ],
+    "categorical_columns": [],
+    "excluded_features": [],
+    "constant_features": []
+  },
+  "deep_learning": {
+    "validation_score": 0.4213215591407032,
+    "validation_metric": "f1_macro",
+    "best_epoch": 1,
+    "epochs_ran": 11,
+    "stopped_early": true
+  },
+  "models": {
+    "logistic_regression": {
+      "validation_score": 0.4276054073046727,
+      "validation_metric": "f1_macro",
+      "classes": [
+        "0.0",
+        "1.0",
+        "2.0"
+      ]
+    },
+    "random_forest": {
+      "validation_score": 0.4488891825606462,
+      "validation_metric": "f1_macro",
+      "classes": [
+        "0.0",
+        "1.0",
+        "2.0"
+      ]
+    }
+  }
+}
