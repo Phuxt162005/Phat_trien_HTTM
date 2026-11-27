@@ -24,6 +24,8 @@ class ModelOutput:
     classes: list[Any]
     test_predictions: np.ndarray
     test_probabilities: np.ndarray
+    train_class_counts_before: dict[str, int]
+    train_class_counts_after: dict[str, int]
 
 
 def _validation_score(y_true, predictions, probabilities, task: str, classes: list[Any]) -> tuple[float, str]:
@@ -40,25 +42,83 @@ def _validation_score(y_true, predictions, probabilities, task: str, classes: li
     return float(f1_score(y_true, predictions, average="macro", zero_division=0)), "f1_macro"
 
 
-def _fit_and_evaluate(name: str, estimator, prepared: PreparedData) -> ModelOutput:
-    train_model = Pipeline([
-        ("preprocess", clone(prepared.preprocessor)),
-        ("model", estimator),
-    ])
-    train_model.fit(prepared.X_train, prepared.y_train)
-    val_probabilities = train_model.predict_proba(prepared.X_validation)
-    val_predictions = train_model.predict(prepared.X_validation)
-    classes = list(train_model.named_steps["model"].classes_)
+def _class_counts(values) -> dict[str, int]:
+    unique, counts = np.unique(np.asarray(values), return_counts=True)
+    return {str(label): int(count) for label, count in zip(unique, counts)}
+
+
+def _random_oversample(X: np.ndarray, y: np.ndarray, minimum_ratio: float = 0.20):
+    """Oversample minority classes on the training partition only."""
+    y = np.asarray(y)
+    unique, counts = np.unique(y, return_counts=True)
+    target_count = max(1, int(np.ceil(int(counts.max()) * minimum_ratio)))
+    rng = np.random.default_rng(RANDOM_STATE)
+    X_parts, y_parts = [X], [y]
+    for label, count in zip(unique, counts):
+        if count < target_count:
+            indices = np.flatnonzero(y == label)
+            sampled = rng.choice(indices, size=target_count - int(count), replace=True)
+            X_parts.append(X[sampled])
+            y_parts.append(y[sampled])
+    X_out = np.concatenate(X_parts, axis=0)
+    y_out = np.concatenate(y_parts, axis=0)
+    order = rng.permutation(len(y_out))
+    return X_out[order], y_out[order]
+
+
+def _fit_and_evaluate(
+    name: str, estimator, prepared: PreparedData,
+    oversample_minority: bool = False,
+    minimum_class_ratio: float = 0.20,
+) -> ModelOutput:
+    # Fit preprocessing on training data only.
+    validation_preprocessor = clone(prepared.preprocessor)
+    X_train = validation_preprocessor.fit_transform(prepared.X_train)
+    X_validation = validation_preprocessor.transform(prepared.X_validation)
+    if hasattr(X_train, "toarray"):
+        X_train = X_train.toarray()
+    if hasattr(X_validation, "toarray"):
+        X_validation = X_validation.toarray()
+    X_train, X_validation = np.asarray(X_train), np.asarray(X_validation)
+    y_train = prepared.y_train.to_numpy()
+    before_counts = _class_counts(y_train)
+
+    if oversample_minority:
+        X_fit, y_fit = _random_oversample(X_train, y_train, minimum_class_ratio)
+    else:
+        X_fit, y_fit = X_train, y_train
+    after_counts = _class_counts(y_fit)
+
+    validation_estimator = clone(estimator)
+    validation_estimator.fit(X_fit, y_fit)
+    val_probabilities = validation_estimator.predict_proba(X_validation)
+    val_predictions = validation_estimator.predict(X_validation)
+    classes = list(validation_estimator.classes_)
     score, metric = _validation_score(
         prepared.y_validation, val_predictions, val_probabilities,
         prepared.profile["task_kind"], classes,
     )
 
+    # Refit on train+validation; never resample or fit on test data.
+    final_preprocessor = clone(prepared.preprocessor)
+    X_train_validation = final_preprocessor.fit_transform(prepared.X_train_validation)
+    if hasattr(X_train_validation, "toarray"):
+        X_train_validation = X_train_validation.toarray()
+    X_train_validation = np.asarray(X_train_validation)
+    y_train_validation = prepared.y_train_validation.to_numpy()
+    if oversample_minority:
+        X_final, y_final = _random_oversample(
+            X_train_validation, y_train_validation, minimum_class_ratio
+        )
+    else:
+        X_final, y_final = X_train_validation, y_train_validation
+
+    final_estimator = clone(estimator)
+    final_estimator.fit(X_final, y_final)
     final_model = Pipeline([
-        ("preprocess", clone(prepared.preprocessor)),
-        ("model", clone(estimator)),
+        ("preprocess", final_preprocessor),
+        ("model", final_estimator),
     ])
-    final_model.fit(prepared.X_train_validation, prepared.y_train_validation)
     test_probabilities = final_model.predict_proba(prepared.X_test)
     test_predictions = final_model.predict(prepared.X_test)
     return ModelOutput(
@@ -66,9 +126,11 @@ def _fit_and_evaluate(name: str, estimator, prepared: PreparedData) -> ModelOutp
         model=final_model,
         validation_score=score,
         validation_metric=metric,
-        classes=list(final_model.named_steps["model"].classes_),
+        classes=list(final_estimator.classes_),
         test_predictions=np.asarray(test_predictions),
         test_probabilities=np.asarray(test_probabilities),
+        train_class_counts_before=before_counts,
+        train_class_counts_after=after_counts,
     )
 
 
