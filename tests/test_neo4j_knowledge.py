@@ -87,6 +87,28 @@ def test_repository_health_and_search_are_parameterized():
         repository.search("diabetes", limit=0)
 
 
+
+def test_repository_fulltext_search_returns_chunk_provenance():
+    driver = FakeDriver([FakeRecord(
+        id="chunk-1", text="Diabetes evidence", title="Guideline",
+        url="https://example.org", page_start=2, page_end=3, score=4.2,
+    )])
+    repository = Neo4jGraphRepository(driver, "neo4j")
+    results = repository.fulltext_search_chunks("diabetes symptoms", limit=4)
+    assert results[0]["id"] == "chunk-1"
+    assert results[0]["page_start"] == 2
+    query, params = driver.session_instance.calls[-1]
+    assert "db.index.fulltext.queryNodes" in query
+    assert "WHERE node:DocumentChunk" in query
+    assert params == {
+        "index_name": "diabetes_knowledge_fulltext",
+        "query": '"diabetes" AND "symptoms"',
+        "limit": 4,
+    }
+    with pytest.raises(ValueError):
+        repository.fulltext_search_chunks(" ", limit=4)
+
+
 def test_knowledge_agent_returns_provenance_and_warning_when_missing():
     class Repository:
         def __init__(self, records):
