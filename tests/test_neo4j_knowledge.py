@@ -135,7 +135,9 @@ def test_repository_vector_methods_are_parameterized():
     results = repository.vector_search([0.1, 0.2], limit=3)
     assert results[0]["id"] == "chunk-1"
     query, params = driver.session_instance.calls[-1]
-    assert "db.index.vector.queryNodes" in query
+    assert "SEARCH node IN" in query
+    assert "VECTOR INDEX diabetes_document_chunk_vector" in query
+    assert "FOR $embedding" in query
     assert params["index_name"] == "diabetes_document_chunk_vector"
     assert params["embedding"] == [0.1, 0.2]
 
