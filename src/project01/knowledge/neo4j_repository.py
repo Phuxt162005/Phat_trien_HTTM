@@ -37,16 +37,18 @@ RETURN labels(node) AS labels,
            direction: CASE WHEN startNode(rel) = node THEN 'outgoing' ELSE 'incoming' END
        } END)[0..10] AS related,
        collect(DISTINCT CASE WHEN doc IS NULL THEN null ELSE {
-           document_id: doc.id, title: doc.title, url: doc.url,
+           document_id: coalesce(doc.id, doc.doc_id),
+           title: coalesce(doc.title, doc.label, doc.question),
+           url: coalesce(doc.url, doc.source_url),
            page: properties(node)['page_start'],
            page_start: properties(node)['page_start'],
            page_end: properties(node)['page_end'],
            chunk_id: CASE WHEN node:DocumentChunk THEN node.id ELSE null END,
            source: CASE WHEN source IS NULL AND node_source IS NULL THEN null ELSE {
-               name: coalesce(source.name, source.source_name, node_source.name, node_source.source_name),
-               url: coalesce(source.url, source.source_url, node_source.url, node_source.source_url),
-               publisher: coalesce(source.publisher, node_source.publisher),
-               license: coalesce(source.license, node_source.license)
+               name: coalesce(source.name, source.source_name, node_source.name, node_source.source_name, doc.source_name, doc.publisher),
+               url: coalesce(source.url, source.source_url, node_source.url, node_source.source_url, doc.url, doc.source_url),
+               publisher: coalesce(source.publisher, node_source.publisher, doc.publisher),
+               license: coalesce(source.license, node_source.license, doc.license)
            } END
        } END) AS evidence
 """
