@@ -13,3 +13,11 @@ CREATE CONSTRAINT knowledge_source_id IF NOT EXISTS FOR (n:KnowledgeSource) REQU
 CREATE FULLTEXT INDEX diabetes_knowledge_fulltext IF NOT EXISTS
 FOR (n:Disease|Symptom|RiskFactor|DiagnosticTest|Complication|Treatment|Medication|Nutrition|MedicalDocument|DocumentChunk)
 ON EACH [n.name, n.title, n.description, n.text];
+
+// Default vector index for intfloat/multilingual-e5-small (384 dimensions).
+CREATE VECTOR INDEX diabetes_document_chunk_vector IF NOT EXISTS
+FOR (n:DocumentChunk) ON (n.embedding)
+OPTIONS {indexConfig: {
+  `vector.dimensions`: 384,
+  `vector.similarity_function`: 'cosine'
+}};

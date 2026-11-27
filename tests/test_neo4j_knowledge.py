@@ -18,6 +18,9 @@ class FakeResult(list):
     def single(self):
         return self[0] if self else None
 
+    def consume(self):
+        return None
+
 
 class FakeSession:
     def __init__(self, records=None):
@@ -107,3 +110,52 @@ def test_schema_is_idempotent_and_does_not_seed_facts():
     assert "IF NOT EXISTS" in schema
     assert "CREATE FULLTEXT INDEX diabetes_knowledge_fulltext" in schema
     assert "CREATE (:Disease" not in schema
+
+
+def test_repository_vector_methods_are_parameterized():
+    driver = FakeDriver([
+        FakeRecord(id="chunk-1", text="Evidence", score=0.91, source={"name": "WHO"})
+    ])
+    repository = Neo4jGraphRepository(driver, "neo4j")
+    assert repository.get_chunks_missing_embeddings(limit=5)[0]["id"] == "chunk-1"
+    query, params = driver.session_instance.calls[-1]
+    assert "chunk.embedding IS NULL" in query
+    assert params == {"limit": 5}
+
+    assert repository.store_chunk_embeddings([{
+        "id": "chunk-1", "embedding": [0.1, 0.2],
+        "embedding_model": "test", "embedding_dimension": 2,
+    }]) == 1
+    query, params = driver.session_instance.calls[-1]
+    assert "SET chunk.embedding = row.embedding" in query
+    assert params["rows"][0]["id"] == "chunk-1"
+
+    results = repository.vector_search([0.1, 0.2], limit=3)
+    assert results[0]["id"] == "chunk-1"
+    query, params = driver.session_instance.calls[-1]
+    assert "db.index.vector.queryNodes" in query
+    assert params["index_name"] == "diabetes_document_chunk_vector"
+    assert params["embedding"] == [0.1, 0.2]
+
+
+def test_repository_vector_methods_validate_inputs():
+    repository = Neo4jGraphRepository(FakeDriver(), "neo4j")
+    with pytest.raises(ValueError):
+        repository.get_chunks_missing_embeddings(limit=0)
+    with pytest.raises(ValueError):
+        repository.store_chunk_embeddings([{"id": "x"}])
+    with pytest.raises(ValueError):
+        repository.vector_search([], limit=2)
+    with pytest.raises(ValueError):
+        repository.vector_search([0.1], limit=0)
+
+
+def test_repository_creates_dimension_specific_vector_index():
+    driver = FakeDriver()
+    repository = Neo4jGraphRepository(driver, "neo4j")
+    repository.create_vector_index(dimension=384)
+    query, _ = driver.session_instance.calls[-1]
+    assert "CREATE VECTOR INDEX diabetes_document_chunk_vector IF NOT EXISTS" in query
+    assert "`vector.dimensions`: 384" in query
+    with pytest.raises(ValueError):
+        repository.create_vector_index(dimension=0)
