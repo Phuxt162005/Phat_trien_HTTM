@@ -204,16 +204,21 @@ class Neo4jDocumentWriter:
     UPSERT_QUERY = """
     UNWIND $rows AS row
     MERGE (source:KnowledgeSource {id: row.source_id})
-    ON CREATE SET source.name = row.source_name,
-                  source.publisher = row.publisher,
-                  source.license = row.license,
-                  source.url = row.source_url
+    SET source.source_id = row.source_id,
+        source.name = coalesce(row.source_name, source.name),
+        source.source_name = coalesce(row.source_name, source.source_name),
+        source.publisher = coalesce(row.publisher, source.publisher),
+        source.license = coalesce(row.license, source.license),
+        source.url = coalesce(row.source_url, source.url),
+        source.source_url = coalesce(row.source_url, source.source_url)
     MERGE (doc:MedicalDocument {id: row.document_id})
-    ON CREATE SET doc.title = row.title,
-                  doc.file_path = row.file_path,
-                  doc.content_sha256 = row.content_sha256,
-                  doc.url = row.source_url
-    MERGE (doc)-[:FROM_SOURCE]->(source)
+    SET doc.title = coalesce(row.title, doc.title),
+        doc.label = coalesce(row.title, doc.label),
+        doc.file_path = row.file_path,
+        doc.content_sha256 = row.content_sha256,
+        doc.url = coalesce(row.source_url, doc.url),
+        doc.source_url = coalesce(row.source_url, doc.source_url)
+    MERGE (doc)-[:CITES_SOURCE]->(source)
     MERGE (chunk:DocumentChunk {id: row.id})
     SET chunk.text = row.text,
         chunk.chunk_index = row.chunk_index,
