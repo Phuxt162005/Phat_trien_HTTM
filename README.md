@@ -68,6 +68,22 @@ Artifacts được lưu trong \`models/<dataset>/\`, gồm model \`.joblib\`, pr
 - Ngưỡng mặc định đưa lớp thiểu số lên tối thiểu 20% số mẫu của lớp đa số, tránh nhân bản toàn bộ lớp thiểu số đến mức cân bằng tuyệt đối.
 - Báo cáo metrics lưu phân bố lớp trước và sau oversampling. Cần so sánh Macro F1, Recall từng lớp và confusion matrix; không đánh giá mô hình chỉ bằng Accuracy.
 
+### So sánh chiến lược xử lý mất cân bằng
+
+Không chọn mức oversampling dựa trên kết quả tập test. Với `diabetes04`, chạy thí nghiệm so sánh các phương án Random Forest sau trên cùng một lần chia dữ liệu:
+
+- Baseline không dùng class weighting/oversampling.
+- `class_weight=balanced_subsample`.
+- Random oversampling với ngưỡng lớp thiểu số lần lượt 20%, 50% và 100% lớp đa số.
+
+Chạy:
+
+```bash
+python scripts/compare_imbalance.py --dataset diabetes04 --rf-estimators 120
+```
+
+Các phương án được lựa chọn bằng Macro F1 trên validation; Recall của lớp thiểu số chỉ dùng để phá hòa. Sau khi chọn xong, mô hình được huấn luyện lại trên train+validation và tập test chỉ được đánh giá một lần. Báo cáo được lưu tại `models/diabetes04/imbalance_comparison.json`, mô hình được chọn tại `models/diabetes04/random_forest_selected_imbalance.joblib`. Đây là thí nghiệm riêng, không tự động ghi đè kết quả pipeline Multi-Agent hiện tại.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
 Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
