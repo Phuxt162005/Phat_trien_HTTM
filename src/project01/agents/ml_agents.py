@@ -174,6 +174,31 @@ class SafetyReviewAgent(BaseAgent):
         )
 
 
+class DeepLearningAgent(BaseAgent):
+    def __init__(self) -> None:
+        super().__init__("DeepLearningAgent")
+
+    def run(self, prepared: PreparedData) -> AgentResult:
+        from ..ml.deep_learning import train_deep_learning_model
+
+        output = train_deep_learning_model(prepared)
+        metrics = evaluate_predictions(
+            prepared.y_test, output.test_predictions,
+            output.test_probabilities, output.classes,
+            prepared.profile["task_kind"],
+        )
+        return AgentResult(
+            self.name, "success",
+            {"output": output, "metrics": metrics,
+             "validation_score": output.validation_score,
+             "validation_metric": output.validation_metric,
+             "best_epoch": output.best_epoch,
+             "epochs_ran": output.epochs_ran,
+             "stopped_early": output.stopped_early},
+            [self.send("SafetyReviewAgent", "deep_learning_ready", {"complete": True})],
+        )
+
+
 class MLCoordinatorAgent(BaseAgent):
     """Coordinates preprocessing, model agents, consensus, evaluation and safety review."""
 
@@ -185,6 +210,7 @@ class MLCoordinatorAgent(BaseAgent):
         self.explanation = ExplanationAgent()
         self.evaluation = EvaluationAgent()
         self.safety = SafetyReviewAgent()
+        self.deep_learning_agent = DeepLearningAgent()
         self.message_log: list[dict[str, Any]] = []
         self.agent_log: list[dict[str, str]] = []
 
@@ -222,13 +248,10 @@ class MLCoordinatorAgent(BaseAgent):
             }
             deep_learning = None
             if include_deep_learning:
-                from ..ml.deep_learning import train_deep_learning_model
-                deep_learning = train_deep_learning_model(prepared)
-                metrics_dl = evaluate_predictions(
-                    prepared.y_test, deep_learning.test_predictions,
-                    deep_learning.test_probabilities, deep_learning.classes,
-                    prepared.profile["task_kind"],
-                )
+                deep_learning_result = self.deep_learning_agent.run(prepared)
+                self._record_result(deep_learning_result)
+                deep_learning = deep_learning_result.data["output"]
+                metrics_dl = deep_learning_result.data["metrics"]
             else:
                 metrics_dl = None
 
