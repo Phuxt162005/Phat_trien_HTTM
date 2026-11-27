@@ -99,7 +99,7 @@ def test_multiclass_random_forest_oversamples_training_partition_only():
 
 
 def test_imbalance_comparison_selects_on_validation_and_evaluates_test_once():
-    from scripts.compare_imbalance import run_comparison
+    from project01.ml.imbalance_comparison import run_comparison
 
     rng = np.random.default_rng(103)
     counts = {0: 150, 1: 12, 2: 45}
