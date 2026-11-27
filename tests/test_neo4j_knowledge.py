@@ -75,11 +75,11 @@ def test_repository_health_and_search_are_parameterized():
     results = repository.search("diabetes", limit=3)
     assert results[0]["entity"]["id"] == "d1"
     cypher, params = driver.session_instance.calls[-1]
-    assert "db.index.fulltext.queryNodes" in cypher
+    assert "FULLTEXT INDEX diabetes_knowledge_fulltext" in cypher
+    assert "SEARCH node IN" in cypher
     assert "CITES_SOURCE|FROM_SOURCE" in cypher
     assert "source.source_url" in cypher
     assert params == {
-        "index_name": "diabetes_knowledge_fulltext",
         "query": '"diabetes"',
         "limit": 3,
     }
@@ -100,10 +100,10 @@ def test_repository_fulltext_search_returns_chunk_provenance():
     assert results[0]["id"] == "chunk-1"
     assert results[0]["page_start"] == 2
     query, params = driver.session_instance.calls[-1]
-    assert "db.index.fulltext.queryNodes" in query
-    assert "WHERE node:DocumentChunk" in query
+    assert "FULLTEXT INDEX diabetes_knowledge_fulltext" in query
+    assert "SEARCH node IN" in query
+    assert "MATCH (node:DocumentChunk)" in query
     assert params == {
-        "index_name": "diabetes_knowledge_fulltext",
         "query": '"diabetes" AND "symptoms"',
         "limit": 4,
     }
@@ -163,7 +163,7 @@ def test_repository_vector_methods_are_parameterized():
     assert "SEARCH node IN" in query
     assert "VECTOR INDEX diabetes_document_chunk_vector" in query
     assert "FOR $embedding" in query
-    assert "properties(node).page_start AS page_start" in query
+    assert "properties(node)['page_start']" in query
     assert "properties(node).page_end AS page_end" in query
     assert "CITES_SOURCE|FROM_SOURCE" in query
     assert "source.source_url" in query
