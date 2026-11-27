@@ -84,6 +84,16 @@ python scripts/compare_imbalance.py --dataset diabetes04 --rf-estimators 120
 
 Các phương án được lựa chọn bằng Macro F1 trên validation; Recall của lớp thiểu số chỉ dùng để phá hòa. Sau khi chọn xong, mô hình được huấn luyện lại trên train+validation và tập test chỉ được đánh giá một lần. Báo cáo được lưu tại `models/diabetes04/imbalance_comparison.json`, mô hình được chọn tại `models/diabetes04/random_forest_selected_imbalance.joblib`. Đây là thí nghiệm riêng, không tự động ghi đè kết quả pipeline Multi-Agent hiện tại.
 
+### Điều chỉnh ngưỡng dự đoán cho lớp thiểu số
+
+Sau khi so sánh class weighting và oversampling, có thể chạy thí nghiệm điều chỉnh threshold cho lớp thiểu số. Mô hình Random Forest dùng `class_weight=balanced_subsample`; threshold được chọn bằng validation theo thứ tự ưu tiên F1 lớp thiểu số, Macro F1 và Precision lớp thiểu số.
+
+```bash
+python scripts/tune_minority_threshold.py --dataset diabetes04 --rf-estimators 120
+```
+
+Báo cáo lưu tại `models/diabetes04/minority_threshold_tuning.json`; mô hình lưu tại `models/diabetes04/random_forest_minority_threshold.joblib`. Tập test chỉ được đánh giá một lần sau khi threshold đã được chọn. Cần xem đồng thời Precision, Recall, F1 lớp thiểu số và Macro F1; không chọn threshold chỉ để tăng Recall vì có thể làm tăng mạnh false positives. Threshold tuning thay đổi quy tắc ra quyết định, không tự cải thiện chất lượng xác suất hay chứng minh giá trị lâm sàng.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
 Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
