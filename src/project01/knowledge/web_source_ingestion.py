@@ -128,8 +128,8 @@ def extract_article(html: str) -> dict[str, str | None]:
     )
     noise_markers = (
         "tai va dat lich kham tu dong tren ung dung my vinmec",
-        "tai ung dung my vinmec", "chia se", "xem them",
-        "hotline", "de lai thong tin tu van",
+        "tai ung dung my vinmec", "tai day", "tai ngay",
+        "chia se", "xem them", "hotline", "de lai thong tin tu van",
     )
     for line in lines:
         if not line:
