@@ -72,6 +72,13 @@ def test_urgent_symptom_routes_to_emergency_without_retrieval():
     assert retriever.calls == []
 
 
+def test_urgent_symptom_is_not_blocked_by_topic_filter():
+    retriever = FakeRetriever()
+    response = ChatbotService(retriever).answer("Tôi đang khó thở")
+    assert response["status"] == "urgent"
+    assert retriever.calls == []
+
+
 def test_empty_query_requests_clarification():
     response = ChatbotService(FakeRetriever()).answer("  ")
     assert response["status"] == "needs_clarification"
