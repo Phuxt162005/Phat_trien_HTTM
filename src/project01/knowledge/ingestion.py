@@ -179,11 +179,19 @@ def ingest_path(
         if root.is_dir() else [root]
     )
     chunks: list[DocumentChunk] = []
+    seen_content_hashes: set[str] = set()
     for file in files:
-        chunks.extend(ingest_file(
+        file_chunks = ingest_file(
             file, source_name=source_name, publisher=publisher, license=license,
             source_url=source_url, chunk_size=chunk_size, overlap=overlap,
-        ))
+        )
+        if not file_chunks:
+            continue
+        content_hash = file_chunks[0].content_sha256
+        if content_hash in seen_content_hashes:
+            continue
+        seen_content_hashes.add(content_hash)
+        chunks.extend(file_chunks)
     return chunks
 
 

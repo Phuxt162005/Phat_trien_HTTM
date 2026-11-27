@@ -47,3 +47,7 @@ Các thao tác dùng MERGE với ID ổn định, có thể chạy lại để t
 - Chưa tạo embedding/vector index, chưa có vector retrieval, hybrid fusion hoặc reranking.
 - Page range của chunk là phạm vi trang buffer; với tài liệu dài, chunk boundary được ưu tiên theo kích thước ký tự và overlap.
 - Cần kiểm tra bản quyền, phiên bản, ngày xuất bản, ngôn ngữ và tính cập nhật trước khi dùng tài liệu làm bằng chứng.
+
+## Page provenance và deduplication
+
+PDF được chunk độc lập theo từng trang để citation page chính xác. PDF scan không có text layer sẽ dừng với thông báo cần OCR, thay vì âm thầm coi như tài liệu rỗng. Khi ingest một thư mục, các file có cùng SHA-256 nội dung được bỏ qua sau lần xuất hiện đầu tiên trong thứ tự đường dẫn.

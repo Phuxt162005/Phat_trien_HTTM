@@ -109,3 +109,68 @@ def test_neo4j_writer_uses_parameterized_idempotent_merge():
     assert params["rows"][0]["id"] == "chunk_1"
     with pytest.raises(ValueError):
         writer.upsert([item], batch_size=0)
+
+
+
+def test_pdf_chunks_keep_exact_page_provenance(tmp_path, monkeypatch):
+    import project01.knowledge.ingestion as ingestion
+
+    pdf = tmp_path / "multi_page.pdf"
+    pdf.write_bytes(b"fake pdf")
+    page_one = " ".join(f"pageone{i}" for i in range(80))
+    page_two = " ".join(f"pagetwo{i}" for i in range(80))
+    monkeypatch.setattr(
+        ingestion, "_read_text_file",
+        lambda _path: [(1, page_one), (2, page_two)],
+    )
+
+    chunks = ingestion.ingest_file(
+        pdf, source_name="Test", chunk_size=180, overlap=30,
+    )
+
+    assert chunks
+    assert {item.page_start for item in chunks if item.page_start == 1} == {1}
+    assert {item.page_end for item in chunks if item.page_end == 1} == {1}
+    assert {item.page_start for item in chunks if item.page_start == 2} == {2}
+    assert {item.page_end for item in chunks if item.page_end == 2} == {2}
+    assert all(item.page_start == item.page_end for item in chunks)
+
+
+def test_ingest_path_skips_duplicate_document_content(tmp_path):
+    from project01.knowledge.ingestion import ingest_path
+
+    first = tmp_path / "a.txt"
+    second = tmp_path / "b.txt"
+    duplicated = "Same source text. " * 80
+    first.write_text(duplicated, encoding="utf-8")
+    second.write_text(duplicated, encoding="utf-8")
+
+    chunks = ingest_path(
+        tmp_path, source_name="Test", chunk_size=180, overlap=30,
+    )
+
+    assert chunks
+    assert len({item.content_sha256 for item in chunks}) == 1
+    assert len({item.document_id for item in chunks}) == 1
+    assert all(item.file_path.endswith("a.txt") for item in chunks)
+
+
+def test_pdf_without_extractable_text_reports_ocr_requirement(tmp_path, monkeypatch):
+    import sys
+    from types import SimpleNamespace
+
+    import project01.knowledge.ingestion as ingestion
+
+    class EmptyPage:
+        def extract_text(self):
+            return ""
+
+    class FakePdfReader:
+        def __init__(self, _path):
+            self.pages = [EmptyPage(), EmptyPage()]
+
+    monkeypatch.setitem(
+        sys.modules, "pypdf", SimpleNamespace(PdfReader=FakePdfReader),
+    )
+    with pytest.raises(ValueError, match="cần OCR"):
+        ingestion._read_pdf(tmp_path / "scanned.pdf")
