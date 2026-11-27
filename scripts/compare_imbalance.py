@@ -17,6 +17,10 @@ from project01.ml.models import _class_counts, _random_oversample
 from project01.ml.preprocessing import prepare_dataset
 
 
+def _dense(values):
+    return values.toarray() if hasattr(values, "toarray") else np.asarray(values)
+
+
 def _build_candidates(n_estimators: int, n_jobs: int):
     common = {
         "n_estimators": n_estimators,
@@ -44,8 +48,8 @@ def run_comparison(frame, config, n_estimators: int = 120, n_jobs: int = 1):
 
     candidates, common = _build_candidates(n_estimators, n_jobs)
     validation_preprocessor = clone(prepared.preprocessor)
-    X_train = np.asarray(validation_preprocessor.fit_transform(prepared.X_train))
-    X_validation = np.asarray(validation_preprocessor.transform(prepared.X_validation))
+    X_train = _dense(validation_preprocessor.fit_transform(prepared.X_train))
+    X_validation = _dense(validation_preprocessor.transform(prepared.X_validation))
     y_train = prepared.y_train.to_numpy()
     y_validation = prepared.y_validation.to_numpy()
     before_counts = _class_counts(y_train)
@@ -92,7 +96,7 @@ def run_comparison(frame, config, n_estimators: int = 120, n_jobs: int = 1):
 
     # Refit on train+validation. Test is untouched until this one final evaluation.
     final_preprocessor = clone(prepared.preprocessor)
-    X_train_validation = np.asarray(
+    X_train_validation = _dense(
         final_preprocessor.fit_transform(prepared.X_train_validation)
     )
     y_train_validation = prepared.y_train_validation.to_numpy()
