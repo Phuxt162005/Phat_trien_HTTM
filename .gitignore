@@ -14,9 +14,28 @@ data/raw/**
 data/processed/**
 !data/processed/.gitkeep
 data/vector_store/**
+
+# Keep model artifacts local by default; allow selected small artifacts only.
 models/**
 !models/.gitkeep
-!models/**/*.json
+!models/ml_experiment_summary.json
+!models/diabetes01/
+!models/diabetes04/
+
+# diabetes01: share metrics and deployable small models; keep Random Forest local.
+models/diabetes01/*
+!models/diabetes01/metrics.json
+!models/diabetes01/logistic_regression.joblib
+!models/diabetes01/deep_learning_mlp.pt
+!models/diabetes01/deep_learning_preprocessor.joblib
+
+# diabetes04: share metrics and deployable small models; keep Random Forest local.
+models/diabetes04/*
+!models/diabetes04/metrics.json
+!models/diabetes04/logistic_regression.joblib
+!models/diabetes04/deep_learning_mlp.pt
+!models/diabetes04/deep_learning_preprocessor.joblib
+
 logs/**
 !logs/.gitkeep
 *.log
