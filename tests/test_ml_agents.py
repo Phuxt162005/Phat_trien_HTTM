@@ -127,3 +127,32 @@ def test_imbalance_comparison_selects_on_validation_and_evaluates_test_once():
     assert "f1_macro" in report["final_test_metrics"]
     assert hasattr(model, "predict_proba")
 
+def test_minority_threshold_tuning_uses_validation_and_evaluates_test_once():
+    from project01.ml.threshold_tuning import run_minority_threshold_tuning
+
+    rng = np.random.default_rng(207)
+    counts = {0: 150, 1: 18, 2: 55}
+    labels = np.concatenate([
+        np.full(count, label) for label, count in counts.items()
+    ])
+    frame = pd.DataFrame({
+        "feature_a": rng.normal(size=len(labels)),
+        "feature_b": rng.normal(size=len(labels)),
+        "Diabetes_012": labels,
+    })
+    config = DatasetConfig(
+        "threshold_tuning_toy", "toy.csv", "Diabetes_012",
+        "multiclass_classification",
+    )
+    report, model = run_minority_threshold_tuning(
+        frame, config, n_estimators=5, n_jobs=1,
+        thresholds=[0.10, 0.20, 0.30],
+    )
+
+    assert report["selected_threshold"] in [0.10, 0.20, 0.30]
+    assert len(report["validation_threshold_candidates"]) == 3
+    assert report["test_evaluation_count"] == 1
+    assert "f1_macro" in report["selected_validation_metrics"]
+    assert "f1_macro" in report["final_test_metrics"]
+    assert hasattr(model, "predict_proba")
+
