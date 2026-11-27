@@ -1,11 +1,11 @@
 # Vinmec source collection
 
-Mở [SOURCE_CATALOG.md](SOURCE_CATALOG.md) để xem 36 bài viết Vinmec đã phân loại theo chủ đề.
+Mở [SOURCE_CATALOG.md](SOURCE_CATALOG.md) để xem 53 mã tài liệu Vinmec (có URL trùng được ghi chú) đã phân loại theo chủ đề.
 
 ## Trạng thái
-- 36 liên kết bài viết tiếng Việt được thu thập.
-- Chưa tải toàn bộ bài viết thành PDF.
-- Chưa ingest 36 bài vào Neo4j.
+- 53 mã tài liệu/liên kết tiếng Việt được lập danh mục; một số mã trùng URL, xem ghi chú khử trùng trong SOURCE_CATALOG.md.
+- Chưa tải toàn bộ bài viết thành PDF; đa số là bài HTML trên website.
+- Chưa ingest danh mục này vào Neo4j.
 - Một số bài có thể trùng nội dung hoặc trích dẫn nguồn thứ cấp; cần kiểm tra trước khi ingest.
 
 ## Quy trình đưa bài vào hệ thống
