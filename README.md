@@ -177,6 +177,24 @@ python scripts/init_neo4j.py
 
 Schema ở `knowledge/neo4j/schema.cypher` chỉ tạo constraints/index; không seed dữ liệu y khoa và không xóa graph hiện tại. Xem `knowledge/neo4j/README.md` trước khi chạy. Agent chỉ trả bằng chứng và provenance; chưa sinh câu trả lời bằng LLM.
 
+## Document ingestion
+
+Đã có pipeline ingest tài liệu cục bộ PDF/TXT/Markdown/HTML:
+- Trích xuất nội dung; PDF giữ số trang.
+- Chuẩn hóa văn bản, chunk có overlap và tạo ID ổn định.
+- Ghi SHA-256, metadata nguồn, publisher, license, URL và đường dẫn.
+- Xuất JSONL để kiểm tra trước khi nạp.
+- Tùy chọn upsert KnowledgeSource, MedicalDocument và DocumentChunk vào Neo4j bằng MERGE.
+
+Cài đặt và chạy thử trên bản sao tài liệu (không sửa file gốc):
+
+```bash
+pip install -e ".[rag,neo4j]"
+python scripts/ingest_documents.py data/sources --source-name "WHO" --publisher "World Health Organization" --license "review-required" --output data/processed/who_chunks.jsonl
+```
+
+Sau khi kiểm tra JSONL và cấu hình Neo4j, thêm `--neo4j` để lưu provenance/chunks vào graph. Không khai báo license nếu chưa xác minh; dùng `review-required`. Ingestion hiện chưa OCR PDF scan, chưa tải URL, chưa tạo embedding và chưa tự trích xuất facts y khoa.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
 Ingestion PDF/web, vector retrieval, Hybrid RAG, chatbot, coordinator workflow tích hợp đầy đủ và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.

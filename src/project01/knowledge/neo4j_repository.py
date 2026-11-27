@@ -12,9 +12,15 @@ SEARCH_QUERY = """
 CALL db.index.fulltext.queryNodes($index_name, $query) YIELD node, score
 WITH node, score ORDER BY score DESC LIMIT $limit
 OPTIONAL MATCH (node)-[rel]-(neighbor)
-WHERE NOT neighbor:MedicalDocument AND NOT neighbor:KnowledgeSource
-OPTIONAL MATCH (node)-[:SUPPORTED_BY]->(doc:MedicalDocument)
+WHERE neighbor IS NOT NULL
+  AND NOT neighbor:MedicalDocument
+  AND NOT neighbor:KnowledgeSource
+  AND NOT neighbor:DocumentChunk
+OPTIONAL MATCH (node)-[:SUPPORTED_BY|PART_OF]->(linked_doc:MedicalDocument)
+WITH node, score, rel, neighbor,
+     coalesce(linked_doc, CASE WHEN node:MedicalDocument THEN node ELSE null END) AS doc
 OPTIONAL MATCH (doc)-[:FROM_SOURCE]->(source:KnowledgeSource)
+OPTIONAL MATCH (node)-[:FROM_SOURCE]->(node_source:KnowledgeSource)
 RETURN labels(node) AS labels,
        properties(node) AS entity,
        score AS score,
@@ -25,10 +31,14 @@ RETURN labels(node) AS labels,
        } END)[0..10] AS related,
        collect(DISTINCT CASE WHEN doc IS NULL THEN null ELSE {
            document_id: doc.id, title: doc.title, url: doc.url,
-           page: doc.page, chunk_id: doc.chunk_id,
-           source: CASE WHEN source IS NULL THEN null ELSE {
-               name: source.name, url: source.url, publisher: source.publisher,
-               license: source.license
+           page: coalesce(node.page_start, doc.page),
+           page_start: node.page_start, page_end: node.page_end,
+           chunk_id: CASE WHEN node:DocumentChunk THEN node.id ELSE null END,
+           source: CASE WHEN source IS NULL AND node_source IS NULL THEN null ELSE {
+               name: coalesce(source.name, node_source.name),
+               url: coalesce(source.url, node_source.url),
+               publisher: coalesce(source.publisher, node_source.publisher),
+               license: coalesce(source.license, node_source.license)
            } END
        } END) AS evidence
 """
