@@ -18,6 +18,7 @@ src/project01/knowledge/hybrid_retriever.py
 src/project01/knowledge/ingestion.py
 src/project01/knowledge/neo4j_config.py
 src/project01/knowledge/neo4j_repository.py
+src/project01/knowledge/retrieval_evaluation.py
 src/project01/knowledge/source_audit.py
 src/project01/knowledge/vinmec_ingestion.py
 src/project01/knowledge/web_source_ingestion.py
@@ -49,6 +50,7 @@ tests/test_ml_pipeline.py
 tests/test_model_benchmark.py
 tests/test_neo4j_knowledge.py
 tests/test_patient_data_agent.py
+tests/test_retrieval_evaluation.py
 tests/test_settings.py
 tests/test_threshold_tuning.py
 tests/test_vinmec_ingestion.py
