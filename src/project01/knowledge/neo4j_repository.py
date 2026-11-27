@@ -97,6 +97,46 @@ class Neo4jGraphRepository:
             result = session.run(SEARCH_QUERY, parameters)
             return [record.data() for record in result]
 
+    def fulltext_search_chunks(self, query: str, limit: int = 8) -> list[dict[str, Any]]:
+        """Search indexed document chunks by lexical terms and retain provenance."""
+        if not isinstance(query, str) or not query.strip():
+            raise ValueError("Query không được để trống.")
+        if not 1 <= int(limit) <= 25:
+            raise ValueError("limit phải nằm trong khoảng 1..25.")
+        lucene_query = _lucene_terms(query)
+        if not lucene_query:
+            return []
+        statement = """
+        CALL db.index.fulltext.queryNodes($index_name, $query)
+        YIELD node, score
+        WITH node, score
+        WHERE node:DocumentChunk
+        OPTIONAL MATCH (node)-[:PART_OF]->(doc:MedicalDocument)
+        OPTIONAL MATCH (doc)-[:FROM_SOURCE]->(source:KnowledgeSource)
+        RETURN node.id AS id,
+               node.text AS text,
+               node.chunk_index AS chunk_index,
+               properties(node).page_start AS page_start,
+               properties(node).page_end AS page_end,
+               doc.id AS document_id,
+               doc.title AS title,
+               doc.url AS url,
+               score AS score,
+               CASE WHEN source IS NULL THEN null ELSE {
+                   name: source.name, publisher: source.publisher,
+                   license: source.license, url: source.url
+               } END AS source
+        ORDER BY score DESC
+        LIMIT $limit
+        """
+        with self.driver.session(database=self.database) as session:
+            result = session.run(statement, {
+                "index_name": FULLTEXT_INDEX,
+                "query": lucene_query,
+                "limit": int(limit),
+            })
+            return [record.data() for record in result]
+
     VECTOR_INDEX = "diabetes_document_chunk_vector"
     VECTOR_SEARCH_QUERY = """
     MATCH (node:DocumentChunk)
