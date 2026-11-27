@@ -12,10 +12,11 @@ import yaml
 class DatasetConfig:
     name: str
     file: str
-    target: str
+    target: str | None
     task: str
     excluded_features: tuple[str, ...] = ()
     role: str = "external"
+    has_target: bool = True
 
 
 def load_dataset_configs(path: Path) -> dict[str, DatasetConfig]:
@@ -24,13 +25,21 @@ def load_dataset_configs(path: Path) -> dict[str, DatasetConfig]:
     raw: dict[str, Any] = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     result: dict[str, DatasetConfig] = {}
     for name, item in raw.get("datasets", {}).items():
+        has_target = bool(item.get("has_target", item.get("target") is not None))
+        target_value = item.get("target")
+        target = str(target_value) if target_value is not None else None
+        if has_target and not target:
+            raise ValueError(f"{name}: has_target=true nhưng chưa khai báo target.")
+        if not has_target and target:
+            raise ValueError(f"{name}: has_target=false nhưng target vẫn được khai báo.")
         result[name] = DatasetConfig(
             name=name,
             file=str(item["file"]),
-            target=str(item["target"]),
+            target=target,
             task=str(item["task"]),
             excluded_features=tuple(item.get("excluded_features", [])),
             role=str(item.get("role", "external")),
+            has_target=has_target,
         )
     return result
 
@@ -47,11 +56,12 @@ def load_dataset(config: DatasetConfig, data_dir: Path) -> pd.DataFrame:
     if df.columns.duplicated().any():
         duplicated = df.columns[df.columns.duplicated()].tolist()
         raise ValueError(f"{config.name}: tên cột bị trùng: {duplicated}")
-    if config.target not in df.columns:
-        raise ValueError(
-            f"{config.name}: không tìm thấy target '{config.target}'. "
-            f"Các cột hiện có: {df.columns.tolist()}"
-        )
-    if df[config.target].isna().any():
-        raise ValueError(f"{config.name}: target '{config.target}' có giá trị thiếu.")
+    if config.has_target:
+        if not config.target or config.target not in df.columns:
+            raise ValueError(
+                f"{config.name}: không tìm thấy target '{config.target}'. "
+                f"Các cột hiện có: {df.columns.tolist()}"
+            )
+        if df[config.target].isna().any():
+            raise ValueError(f"{config.name}: target '{config.target}' có giá trị thiếu.")
     return df
