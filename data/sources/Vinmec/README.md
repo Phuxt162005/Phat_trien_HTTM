@@ -23,3 +23,29 @@ python scripts/ingest_documents.py data/sources/Vinmec/<file-da-duoc-phep>.pdf -
 ```
 
 Không đặt `--license` là CC-BY hoặc public domain nếu chưa có bằng chứng.
+
+
+## Kiểm tra liên kết và metadata trước ingestion
+
+Đã có script kiểm tra danh mục URL theo hướng metadata-only. Script:
+- Khử trùng URL trong bảng Markdown.
+- Chỉ truy cập HTTPS trên domain `vinmec.com`.
+- Ghi HTTP status, URL sau redirect, canonical URL, title và metadata ngày đăng/cập nhật nếu trang công khai chúng.
+- Không lưu nội dung bài viết, không tải PDF và không ghi dữ liệu vào Neo4j.
+- Tôn trọng lỗi 403/429; không tự động vượt cơ chế chặn truy cập.
+
+Chạy toàn bộ danh mục:
+
+```powershell
+python scripts/audit_vinmec_sources.py
+```
+
+Chạy thử 5 URL đầu tiên:
+
+```powershell
+python scripts/audit_vinmec_sources.py --limit 5 --delay 1
+```
+
+Báo cáo mặc định được tạo tại `data/processed/vinmec_source_audit.json`. Hãy kiểm tra `status_counts`, `canonical_url` và các trang bị redirect/blocked trước khi chuẩn bị ingestion.
+
+**Quan trọng:** HTTP 200 không đồng nghĩa với quyền sao chép hoặc text mining. Chỉ ingest nội dung khi đã xác minh điều khoản/quyền sử dụng. Không dùng metadata audit thay cho kiểm tra chuyên môn của tài liệu.
