@@ -34,7 +34,10 @@ def run_classwise_probability_tuning(
         raise ValueError("Class-wise probability tuning chỉ hỗ trợ bài toán đa lớp.")
 
     counts = _class_counts(prepared.y_train.to_numpy())
-    minority_label = min(counts, key=counts.get)
+    # Keep the original label type (e.g. int 1) so it matches estimator.classes_.
+    minority_label = prepared.y_train.value_counts().idxmin()
+    if hasattr(minority_label, "item"):
+        minority_label = minority_label.item()
     if factors is None:
         factors = [round(float(x), 2) for x in np.arange(1.0, 12.01, 0.25)]
     if not factors or any(not np.isfinite(x) or x < 1.0 for x in factors):
