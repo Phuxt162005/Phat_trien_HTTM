@@ -48,21 +48,28 @@ class ModelBAgent(BaseAgent):
         self.n_jobs = n_jobs
 
     def run(self, prepared: PreparedData) -> AgentResult:
+        is_multiclass = prepared.profile["task_kind"] == "multiclass"
         estimator = RandomForestClassifier(
             n_estimators=self.n_estimators,
             min_samples_leaf=2,
-            class_weight="balanced_subsample",
+            class_weight=None if is_multiclass else "balanced_subsample",
             bootstrap=True,
             max_samples=0.8,
             random_state=42,
             n_jobs=self.n_jobs,
         )
-        output = _fit_and_evaluate("Random Forest", estimator, prepared)
+        output = _fit_and_evaluate(
+            "Random Forest", estimator, prepared,
+            oversample_minority=is_multiclass,
+            minimum_class_ratio=0.20,
+        )
         return AgentResult(
             self.name,
             "success",
             {"output": output, "validation_score": output.validation_score,
-             "validation_metric": output.validation_metric},
+             "validation_metric": output.validation_metric,
+             "train_class_counts_before": output.train_class_counts_before,
+             "train_class_counts_after": output.train_class_counts_after},
             [self.send("ConsensusAgent", "model_ready", {
                 "model": self.name, "validation_score": output.validation_score
             })],
@@ -323,6 +330,8 @@ class MLCoordinatorAgent(BaseAgent):
                             "validation_score": output.validation_score,
                             "validation_metric": output.validation_metric,
                             "classes": [str(value) for value in output.classes],
+                            "train_class_counts_before": output.train_class_counts_before,
+                            "train_class_counts_after": output.train_class_counts_after,
                         }
                         for name, output in outputs.items()
                     },
