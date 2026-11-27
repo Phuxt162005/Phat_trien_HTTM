@@ -96,3 +96,34 @@ def test_multiclass_random_forest_oversamples_training_partition_only():
     test_rows = result.data["profile"]["test_rows"]
     assert test_rows > 0
     assert len(rf_output.test_predictions) == test_rows
+
+
+def test_imbalance_comparison_selects_on_validation_and_evaluates_test_once():
+    from scripts.compare_imbalance import run_comparison
+
+    rng = np.random.default_rng(103)
+    counts = {0: 150, 1: 12, 2: 45}
+    labels = np.concatenate([
+        np.full(count, label) for label, count in counts.items()
+    ])
+    frame = pd.DataFrame({
+        "feature_a": rng.normal(size=len(labels)),
+        "feature_b": rng.normal(size=len(labels)),
+        "Diabetes_012": labels,
+    })
+    config = DatasetConfig(
+        "imbalance_comparison_toy", "toy.csv", "Diabetes_012",
+        "multiclass_classification",
+    )
+    report, model = run_comparison(frame, config, n_estimators=5, n_jobs=1)
+
+    assert report["selected_strategy"] in {
+        "baseline", "class_weight_balanced", "random_over_20pct",
+        "random_over_50pct", "random_over_100pct",
+    }
+    assert len(report["candidates"]) == 5
+    assert report["test_evaluation_count"] == 1
+    assert "f1_macro" in report["selected_validation_metrics"]
+    assert "f1_macro" in report["final_test_metrics"]
+    assert hasattr(model, "predict_proba")
+
