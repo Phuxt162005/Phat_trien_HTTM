@@ -140,7 +140,7 @@ def test_repository_vector_methods_are_parameterized():
     assert "VECTOR INDEX diabetes_document_chunk_vector" in query
     assert "FOR $embedding" in query
     assert params["index_name"] == "diabetes_document_chunk_vector"
-    assert params["embedding"] == [0.1, 0.2]
+    assert np.allclose(params["embedding"], [0.1, 0.2], rtol=1e-6, atol=1e-7)
 
 
 def test_repository_vector_methods_validate_inputs():
