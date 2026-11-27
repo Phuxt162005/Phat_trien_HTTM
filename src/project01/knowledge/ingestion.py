@@ -68,7 +68,13 @@ def _read_pdf(path: Path) -> list[tuple[int, str]]:
     except ImportError as exc:
         raise RuntimeError('Cài PDF dependency bằng: pip install -e ".[rag]"') from exc
     reader = PdfReader(str(path))
-    return [(index + 1, page.extract_text() or "") for index, page in enumerate(reader.pages)]
+    pages = [(index + 1, page.extract_text() or "") for index, page in enumerate(reader.pages)]
+    if pages and not any(text.strip() for _, text in pages):
+        raise ValueError(
+            f"PDF '{path.name}' không trích xuất được lớp văn bản; "
+            "có thể đây là PDF scan và cần OCR trước khi ingestion."
+        )
+    return pages
 
 
 def _read_text_file(path: Path) -> list[tuple[int | None, str]]:
@@ -115,25 +121,13 @@ def ingest_file(
     document_id = _stable_id("doc", f"{file_path.name}|{content_hash}")
     title = file_path.stem.replace("_", " ").strip()
     output: list[DocumentChunk] = []
-    buffer = ""
-    buffer_pages: list[int] = []
     for page_number, page_text in page_texts:
-        if buffer and len(buffer) >= chunk_size:
-            parts = chunk_text(buffer, chunk_size, overlap)
-            for part in parts:
-                output.append(_make_chunk(
-                    part, len(output), document_id, source_id, title, buffer_pages,
-                    source_name, publisher, license, source_url, file_path, content_hash,
-                ))
-            buffer = ""
-            buffer_pages = []
-        buffer = f"{buffer}\n\n{page_text}".strip()
-        if page_number is not None:
-            buffer_pages.append(page_number)
-    if buffer:
-        for part in chunk_text(buffer, chunk_size, overlap):
+        # Chunk each PDF page independently so every chunk has exact page
+        # provenance. Non-PDF formats use page_number=None.
+        for part in chunk_text(page_text, chunk_size, overlap):
+            page_range = [page_number] if page_number is not None else []
             output.append(_make_chunk(
-                part, len(output), document_id, source_id, title, buffer_pages,
+                part, len(output), document_id, source_id, title, page_range,
                 source_name, publisher, license, source_url, file_path, content_hash,
             ))
     return output
