@@ -163,7 +163,7 @@ def test_repository_vector_methods_are_parameterized():
     assert "SEARCH node IN" in query
     assert "VECTOR INDEX diabetes_document_chunk_vector" in query
     assert "FOR $embedding" in query
-    assert "properties(node)['page_start']" in query
+    assert "properties(node).page_start AS page_start" in query
     assert "properties(node).page_end AS page_end" in query
     assert "CITES_SOURCE|FROM_SOURCE" in query
     assert "source.source_url" in query
