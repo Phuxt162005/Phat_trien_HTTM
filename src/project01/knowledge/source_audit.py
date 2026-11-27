@@ -13,7 +13,7 @@ GENERIC_TITLES = {"bai viet", "vinmec", "trang chu", "suc khoe tong hop"}
 
 def _normalise(value: str | None) -> str:
     value = (value or "").lower()
-    value = re.sub(r"\\s+", " ", value)
+    value = re.sub(r"\s+", " ", value)
     return value.strip(" -|")
 
 
