@@ -16,7 +16,7 @@ class PatientDataAgent(BaseAgent):
 
     def validate_frame(self, df: pd.DataFrame, target: str | None = None) -> AgentResult:
         if not isinstance(df, pd.DataFrame) or df.empty:
-            return AgentResult(self.name, "error", errors=["Dữ liệu đầu vào phải là DataFrame không rỗng."])
+            return AgentResult(self.name, "failed", errors=["Dữ liệu đầu vào phải là DataFrame không rỗng."])
 
         duplicate_columns = df.columns[df.columns.duplicated()].tolist()
         missing_by_column = df.isna().sum()
