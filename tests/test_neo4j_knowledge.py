@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from project01.agents.knowledge_agent import KnowledgeGraphAgent
@@ -132,7 +133,7 @@ def test_repository_vector_methods_are_parameterized():
     assert "SET chunk.embedding = row.embedding" in query
     assert params["rows"][0]["id"] == "chunk-1"
 
-    results = repository.vector_search([0.1, 0.2], limit=3)
+    results = repository.vector_search(np.array([0.1, 0.2], dtype=np.float32), limit=3)
     assert results[0]["id"] == "chunk-1"
     query, params = driver.session_instance.calls[-1]
     assert "SEARCH node IN" in query
@@ -150,6 +151,8 @@ def test_repository_vector_methods_validate_inputs():
         repository.store_chunk_embeddings([{"id": "x"}])
     with pytest.raises(ValueError):
         repository.vector_search([], limit=2)
+    with pytest.raises(ValueError):
+        repository.vector_search(np.array([[0.1, 0.2]], dtype=np.float32), limit=2)
     with pytest.raises(ValueError):
         repository.vector_search([0.1], limit=0)
 
