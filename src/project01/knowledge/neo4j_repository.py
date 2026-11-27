@@ -10,14 +10,20 @@ from .neo4j_config import Neo4jSettings
 
 FULLTEXT_INDEX = "diabetes_knowledge_fulltext"
 SEARCH_QUERY = """
-CALL db.index.fulltext.queryNodes($index_name, $query) YIELD node, score
+MATCH (node)
+SEARCH node IN (
+    FULLTEXT INDEX diabetes_knowledge_fulltext
+    FOR $query
+    LIMIT $limit
+)
+SCORE AS score
 WITH node, score ORDER BY score DESC LIMIT $limit
 OPTIONAL MATCH (node)-[rel]-(neighbor)
 WHERE neighbor IS NOT NULL
   AND NOT neighbor:MedicalDocument
   AND NOT neighbor:KnowledgeSource
   AND NOT neighbor:DocumentChunk
-OPTIONAL MATCH (node)-[:SUPPORTED_BY|PART_OF]->(linked_doc:MedicalDocument)
+OPTIONAL MATCH (node)-[:PART_OF]->(linked_doc:MedicalDocument)
 WITH node, score, rel, neighbor,
      coalesce(linked_doc, CASE WHEN node:MedicalDocument THEN node ELSE null END) AS doc
 OPTIONAL MATCH (doc)-[:CITES_SOURCE|FROM_SOURCE]->(source:KnowledgeSource)
@@ -107,10 +113,13 @@ class Neo4jGraphRepository:
         if not lucene_query:
             return []
         statement = """
-        CALL db.index.fulltext.queryNodes($index_name, $query)
-        YIELD node, score
-        WITH node, score
-        WHERE node:DocumentChunk
+        MATCH (node:DocumentChunk)
+        SEARCH node IN (
+            FULLTEXT INDEX diabetes_knowledge_fulltext
+            FOR $query
+            LIMIT $limit
+        )
+        SCORE AS score
         OPTIONAL MATCH (node)-[:PART_OF]->(doc:MedicalDocument)
         OPTIONAL MATCH (doc)-[:CITES_SOURCE|FROM_SOURCE]->(source:KnowledgeSource)
         RETURN node.id AS id,
@@ -133,7 +142,6 @@ class Neo4jGraphRepository:
         """
         with self.driver.session(database=self.database) as session:
             result = session.run(statement, {
-                "index_name": FULLTEXT_INDEX,
                 "query": lucene_query,
                 "limit": int(limit),
             })
