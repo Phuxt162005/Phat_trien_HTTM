@@ -49,3 +49,44 @@ python scripts/audit_vinmec_sources.py --limit 5 --delay 1
 Báo cáo mặc định được tạo tại `data/processed/vinmec_source_audit.json`. Hãy kiểm tra `status_counts`, `canonical_url` và các trang bị redirect/blocked trước khi chuẩn bị ingestion.
 
 **Quan trọng:** HTTP 200 không đồng nghĩa với quyền sao chép hoặc text mining. Chỉ ingest nội dung khi đã xác minh điều khoản/quyền sử dụng. Không dùng metadata audit thay cho kiểm tra chuyên môn của tài liệu.
+
+
+## Trích xuất bài HTML Vinmec đã audit (local-only)
+
+Pipeline mới đọc báo cáo audit, chỉ chọn dòng `status=ok` và `page_valid=true`, sau đó:
+- Kiểm tra `robots.txt`; nếu bị chặn hoặc không đọc được robots.txt thì bỏ qua URL.
+- Giới hạn domain HTTPS ở `vinmec.com`, có timeout, delay và giới hạn dung lượng phản hồi.
+- Trích nội dung từ `article`, `main` hoặc vùng bài viết; loại bỏ các vùng điều hướng phổ biến.
+- Ghi canonical URL, title, H1, ngày đăng/cập nhật, tác giả nếu trang công khai, SHA-256 và ghi chú quyền sử dụng.
+- Khử trùng theo canonical URL và hash nội dung trong một lần chạy.
+- Không ghi nội dung bài viết vào Git; `data/documents/` được thêm vào `.gitignore`.
+
+Cài dependency HTML nếu chưa có:
+
+```powershell
+pip install -e ".[rag]"
+```
+
+**Chỉ chạy khi đã xác minh có quyền lưu trữ/xử lý nội dung theo điều khoản nguồn hoặc được cấp phép.** Cờ `--rights-note` bắt buộc để ghi lại căn cứ đã xác minh; không nhập nội dung xác nhận nếu chưa có căn cứ thực tế.
+
+Chạy thử tối đa 2 URL sau khi xác minh quyền:
+
+```powershell
+python scripts/fetch_vinmec_articles.py --limit 2 --delay 2 --rights-note "Ghi rõ căn cứ cho phép lưu trữ và xử lý nội dung"
+```
+
+Chạy toàn bộ các ứng viên đủ điều kiện:
+
+```powershell
+python scripts/fetch_vinmec_articles.py --delay 2 --rights-note "Ghi rõ căn cứ cho phép lưu trữ và xử lý nội dung"
+```
+
+Kết quả nằm ở `data/documents/Vinmec/`; mỗi bài có `content.md` và `metadata.json`. Báo cáo nằm tại `data/documents/Vinmec/extraction_report.json`. Các file này ở local, không được commit lên Git.
+
+Sau khi nội dung được phép lưu và đã kiểm tra, dùng pipeline ingestion hiện có:
+
+```powershell
+python scripts/ingest_documents.py data/documents/Vinmec --source-name "Vinmec" --publisher "Vinmec" --license "See per-document metadata; permission verified" --output data/processed/vinmec_chunks.jsonl
+```
+
+Lệnh trên chỉ tạo JSONL chunk, **không ghi Neo4j**. Chỉ thêm `--neo4j` sau khi đã kiểm tra nội dung và metadata. Với dữ liệu nhiều nguồn/quyền khác nhau, nên ingest theo từng tài liệu hoặc nhóm có cùng điều kiện quyền thay vì dùng chung một license.
