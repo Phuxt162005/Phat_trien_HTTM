@@ -1,347 +1,4 @@
 {
-  "diabetes01": {
-    "profile": {
-      "dataset": "diabetes01",
-      "task": "binary_classification",
-      "task_kind": "binary",
-      "target": "diabetes",
-      "classes": [
-        0,
-        1
-      ],
-      "class_distribution": {
-        "0": 91500,
-        "1": 8500
-      },
-      "rows": 100000,
-      "feature_count": 8,
-      "train_rows": 69997,
-      "validation_rows": 15003,
-      "test_rows": 15000
-    },
-    "metrics": {
-      "individual": {
-        "logistic_regression": {
-          "accuracy": 0.8884,
-          "precision_macro": 0.7076245943915589,
-          "recall_macro": 0.8927718847101682,
-          "f1_macro": 0.7567018514611221,
-          "confusion_matrix": [
-            [
-              12181,
-              1544
-            ],
-            [
-              130,
-              1145
-            ]
-          ],
-          "classification_report": {
-            "0": {
-              "precision": 0.989440337909187,
-              "recall": 0.8875045537340619,
-              "f1-score": 0.9357044092794592,
-              "support": 13725.0
-            },
-            "1": {
-              "precision": 0.42580885087393083,
-              "recall": 0.8980392156862745,
-              "f1-score": 0.577699293642785,
-              "support": 1275.0
-            },
-            "accuracy": 0.8884,
-            "macro avg": {
-              "precision": 0.7076245943915589,
-              "recall": 0.8927718847101682,
-              "f1-score": 0.7567018514611221,
-              "support": 15000.0
-            },
-            "weighted avg": {
-              "precision": 0.9415316615111903,
-              "recall": 0.8884,
-              "f1-score": 0.905273974450342,
-              "support": 15000.0
-            }
-          },
-          "roc_auc": 0.9629753062609379
-        },
-        "random_forest": {
-          "accuracy": 0.9642,
-          "precision_macro": 0.9030527757313916,
-          "recall_macro": 0.8562884388728169,
-          "f1_macro": 0.8778854934015037,
-          "confusion_matrix": [
-            [
-              13537,
-              188
-            ],
-            [
-              349,
-              926
-            ]
-          ],
-          "classification_report": {
-            "0": {
-              "precision": 0.974866772288636,
-              "recall": 0.9863023679417122,
-              "f1-score": 0.9805512295824128,
-              "support": 13725.0
-            },
-            "1": {
-              "precision": 0.8312387791741472,
-              "recall": 0.7262745098039216,
-              "f1-score": 0.7752197572205944,
-              "support": 1275.0
-            },
-            "accuracy": 0.9642,
-            "macro avg": {
-              "precision": 0.9030527757313916,
-              "recall": 0.8562884388728169,
-              "f1-score": 0.8778854934015037,
-              "support": 15000.0
-            },
-            "weighted avg": {
-              "precision": 0.9626583928739044,
-              "recall": 0.9642,
-              "f1-score": 0.9630980544316582,
-              "support": 15000.0
-            }
-          },
-          "roc_auc": 0.9725683917282759
-        }
-      },
-      "soft_voting": {
-        "accuracy": 0.9434,
-        "precision_macro": 0.8057536790028919,
-        "recall_macro": 0.8840522875816994,
-        "f1_macro": 0.8389967028016558,
-        "confusion_matrix": [
-          [
-            13115,
-            610
-          ],
-          [
-            239,
-            1036
-          ]
-        ],
-        "classification_report": {
-          "0": {
-            "precision": 0.9821027407518347,
-            "recall": 0.9555555555555556,
-            "f1-score": 0.9686472912589091,
-            "support": 13725.0
-          },
-          "1": {
-            "precision": 0.6294046172539489,
-            "recall": 0.8125490196078431,
-            "f1-score": 0.7093461143444026,
-            "support": 1275.0
-          },
-          "accuracy": 0.9434,
-          "macro avg": {
-            "precision": 0.8057536790028919,
-            "recall": 0.8840522875816994,
-            "f1-score": 0.8389967028016558,
-            "support": 15000.0
-          },
-          "weighted avg": {
-            "precision": 0.9521234002545144,
-            "recall": 0.9434,
-            "f1-score": 0.946606691221176,
-            "support": 15000.0
-          }
-        },
-        "roc_auc": 0.9710589663916567
-      },
-      "deep_learning": {
-        "accuracy": 0.9051333333333333,
-        "precision_macro": 0.7301631854641311,
-        "recall_macro": 0.9054730526090218,
-        "f1_macro": 0.7823154055290622,
-        "confusion_matrix": [
-          [
-            12422,
-            1303
-          ],
-          [
-            120,
-            1155
-          ]
-        ],
-        "classification_report": {
-          "0": {
-            "precision": 0.9904321479827779,
-            "recall": 0.9050637522768671,
-            "f1-score": 0.9458255605893326,
-            "support": 13725.0
-          },
-          "1": {
-            "precision": 0.4698942229454841,
-            "recall": 0.9058823529411765,
-            "f1-score": 0.6188052504687919,
-            "support": 1275.0
-          },
-          "accuracy": 0.9051333333333333,
-          "macro avg": {
-            "precision": 0.7301631854641311,
-            "recall": 0.9054730526090218,
-            "f1-score": 0.7823154055290622,
-            "support": 15000.0
-          },
-          "weighted avg": {
-            "precision": 0.9461864243546079,
-            "recall": 0.9051333333333333,
-            "f1-score": 0.9180288342290868,
-            "support": 15000.0
-          }
-        },
-        "roc_auc": 0.9766513375477696
-      }
-    },
-    "agent_log": [
-      {
-        "agent": "PreprocessingAgent",
-        "status": "success"
-      },
-      {
-        "agent": "ModelAAgent",
-        "status": "success"
-      },
-      {
-        "agent": "ModelBAgent",
-        "status": "success"
-      },
-      {
-        "agent": "ConsensusAgent",
-        "status": "success"
-      },
-      {
-        "agent": "ExplanationAgent",
-        "status": "success"
-      },
-      {
-        "agent": "EvaluationAgent",
-        "status": "success"
-      },
-      {
-        "agent": "DeepLearningAgent",
-        "status": "success"
-      },
-      {
-        "agent": "SafetyReviewAgent",
-        "status": "success"
-      }
-    ],
-    "message_log": [
-      {
-        "sender": "ModelAAgent",
-        "receiver": "ConsensusAgent",
-        "message_type": "model_ready",
-        "payload": {
-          "model": "ModelAAgent",
-          "validation_score": 0.9630670963023905
-        },
-        "status": "success",
-        "message_id": "77221c1d-5b9f-4be2-8e4b-c334e356ea0e",
-        "created_at": "2026-11-27T08:24:13.387106+00:00"
-      },
-      {
-        "sender": "ModelBAgent",
-        "receiver": "ConsensusAgent",
-        "message_type": "model_ready",
-        "payload": {
-          "model": "ModelBAgent",
-          "validation_score": 0.9747065393756569
-        },
-        "status": "success",
-        "message_id": "c70f4cc8-78ea-459a-865c-0ad09d902e36",
-        "created_at": "2026-11-27T08:24:30.168949+00:00"
-      },
-      {
-        "sender": "ConsensusAgent",
-        "receiver": "ExplanationAgent",
-        "message_type": "consensus_ready",
-        "payload": {
-          "rows": 15000
-        },
-        "status": "success",
-        "message_id": "ac4ee925-a334-4c73-9a17-bd991a8f3d67",
-        "created_at": "2026-11-27T08:24:30.179054+00:00"
-      },
-      {
-        "sender": "ConsensusAgent",
-        "receiver": "EvaluationAgent",
-        "message_type": "consensus_ready",
-        "payload": {
-          "rows": 15000
-        },
-        "status": "success",
-        "message_id": "e7878e35-94c7-4da3-aa60-dc3d862ae47a",
-        "created_at": "2026-11-27T08:24:30.179079+00:00"
-      },
-      {
-        "sender": "ExplanationAgent",
-        "receiver": "SafetyReviewAgent",
-        "message_type": "explanation_ready",
-        "payload": {
-          "created": true
-        },
-        "status": "success",
-        "message_id": "a039ea8a-2e54-4643-8e39-f72c815996b5",
-        "created_at": "2026-11-27T08:24:30.237340+00:00"
-      },
-      {
-        "sender": "EvaluationAgent",
-        "receiver": "SafetyReviewAgent",
-        "message_type": "evaluation_ready",
-        "payload": {
-          "complete": true
-        },
-        "status": "success",
-        "message_id": "72a08cd1-8b78-46a0-9950-6624957a2050",
-        "created_at": "2026-11-27T08:24:30.285786+00:00"
-      },
-      {
-        "sender": "DeepLearningAgent",
-        "receiver": "SafetyReviewAgent",
-        "message_type": "deep_learning_ready",
-        "payload": {
-          "complete": true
-        },
-        "status": "success",
-        "message_id": "f5df4998-387d-4ef5-99c1-dd656e066ae7",
-        "created_at": "2026-11-27T08:27:42.367238+00:00"
-      },
-      {
-        "sender": "SafetyReviewAgent",
-        "receiver": "MLCoordinatorAgent",
-        "message_type": "review_passed",
-        "payload": {
-          "valid_output": true
-        },
-        "status": "success",
-        "message_id": "e43db6aa-c6a2-4b22-9a06-11a2682372fa",
-        "created_at": "2026-11-27T08:27:42.368151+00:00"
-      }
-    ],
-    "safety_review": {
-      "valid_output": true,
-      "warnings": [
-        "Đây là kết quả dự đoán của mô hình, không phải chẩn đoán y khoa.",
-        "Cần kiểm chứng trên dữ liệu độc lập và được chuyên gia y tế đánh giá trước khi ứng dụng.",
-        "Feature importance không chứng minh quan hệ nhân quả.",
-        "Có mẫu có xác suất lớp cao nhất dưới 0.60; cần thận trọng khi diễn giải."
-      ],
-      "evaluation_summary": {
-        "accuracy": 0.9434,
-        "precision_macro": 0.8057536790028919,
-        "recall_macro": 0.8840522875816994,
-        "f1_macro": 0.8389967028016558,
-        "roc_auc": 0.9710589663916567
-      }
-    }
-  },
   "diabetes04": {
     "profile": {
       "dataset": "diabetes04",
@@ -424,32 +81,32 @@
           "roc_auc_ovr_macro": 0.7737133999953648
         },
         "random_forest": {
-          "accuracy": 0.8180647534952171,
-          "precision_macro": 0.4333422066211836,
-          "recall_macro": 0.4465901105980948,
-          "f1_macro": 0.43971520468064335,
+          "accuracy": 0.8454746136865342,
+          "precision_macro": 0.4668147636925924,
+          "recall_macro": 0.3902212603239948,
+          "f1_macro": 0.40208186476659513,
           "confusion_matrix": [
             [
-              28787,
-              67,
-              3201
+              31111,
+              92,
+              852
             ],
             [
-              471,
+              625,
               0,
-              224
+              70
             ],
             [
-              2945,
-              15,
-              2342
+              4214,
+              27,
+              1061
             ]
           ],
           "classification_report": {
             "0.0": {
-              "precision": 0.8939229264354253,
-              "recall": 0.8980502261737638,
-              "f1-score": 0.8959818232749229,
+              "precision": 0.8653963838664812,
+              "recall": 0.9705506161285291,
+              "f1-score": 0.9149621351371223,
               "support": 32055.0
             },
             "1.0": {
@@ -459,141 +116,84 @@
               "support": 695.0
             },
             "2.0": {
-              "precision": 0.4061036934281255,
-              "recall": 0.44172010562052055,
-              "f1-score": 0.42316379076700694,
+              "precision": 0.535047907211296,
+              "recall": 0.2001131648434553,
+              "f1-score": 0.291283459162663,
               "support": 5302.0
             },
-            "accuracy": 0.8180647534952171,
+            "accuracy": 0.8454746136865342,
             "macro avg": {
-              "precision": 0.4333422066211836,
-              "recall": 0.4465901105980948,
-              "f1-score": 0.43971520468064335,
+              "precision": 0.4668147636925924,
+              "recall": 0.3902212603239948,
+              "f1-score": 0.40208186476659513,
               "support": 38052.0
             },
             "weighted avg": {
-              "precision": 0.8096252809167318,
-              "recall": 0.8180647534952171,
-              "f1-score": 0.8137367750374309,
+              "precision": 0.8035610503751274,
+              "recall": 0.8454746136865342,
+              "f1-score": 0.8113501561626432,
               "support": 38052.0
             }
           },
-          "roc_auc_ovr_macro": 0.7535241043506143
+          "roc_auc_ovr_macro": 0.7625208846220687
         }
       },
       "soft_voting": {
-        "accuracy": 0.7895248607169137,
-        "precision_macro": 0.43488861229670367,
-        "recall_macro": 0.4810453170528593,
-        "f1_macro": 0.44615898847991753,
+        "accuracy": 0.8212446126353411,
+        "precision_macro": 0.4521034921196057,
+        "recall_macro": 0.45412069180563347,
+        "f1_macro": 0.4505974994188167,
         "confusion_matrix": [
           [
-            26845,
-            77,
-            5133
+            28852,
+            140,
+            3063
           ],
           [
-            383,
-            2,
-            310
+            471,
+            8,
+            216
           ],
           [
-            2078,
-            28,
-            3196
+            2849,
+            63,
+            2390
           ]
         ],
         "classification_report": {
           "0.0": {
-            "precision": 0.9160240223844947,
-            "recall": 0.837466853844954,
-            "f1-score": 0.8749857401280944,
+            "precision": 0.89680467487256,
+            "recall": 0.9000779909530494,
+            "f1-score": 0.8984383514721224,
             "support": 32055.0
           },
           "1.0": {
-            "precision": 0.018691588785046728,
-            "recall": 0.0028776978417266188,
-            "f1-score": 0.004987531172069825,
+            "precision": 0.037914691943127965,
+            "recall": 0.011510791366906475,
+            "f1-score": 0.017660044150110375,
             "support": 695.0
           },
           "2.0": {
-            "precision": 0.3699502257205695,
-            "recall": 0.6027913994718974,
-            "f1-score": 0.45850369413958825,
+            "precision": 0.4215911095431293,
+            "recall": 0.4507732930969445,
+            "f1-score": 0.4356941026342175,
             "support": 5302.0
           },
-          "accuracy": 0.7895248607169137,
+          "accuracy": 0.8212446126353411,
           "macro avg": {
-            "precision": 0.43488861229670367,
-            "recall": 0.4810453170528593,
-            "f1-score": 0.44615898847991753,
+            "precision": 0.4521034921196057,
+            "recall": 0.45412069180563347,
+            "f1-score": 0.4505974994188167,
             "support": 38052.0
           },
           "weighted avg": {
-            "precision": 0.8235471667326565,
-            "recall": 0.7895248607169137,
-            "f1-score": 0.8010648801718373,
+            "precision": 0.8149033067049841,
+            "recall": 0.8212446126353411,
+            "f1-score": 0.8178746247053986,
             "support": 38052.0
           }
         },
-        "roc_auc_ovr_macro": 0.7749454550335654
-      },
-      "deep_learning": {
-        "accuracy": 0.6492431409649952,
-        "precision_macro": 0.4445242262470232,
-        "recall_macro": 0.5115227164302502,
-        "f1_macro": 0.42540351534765924,
-        "confusion_matrix": [
-          [
-            21560,
-            5531,
-            4964
-          ],
-          [
-            208,
-            215,
-            272
-          ],
-          [
-            1064,
-            1308,
-            2930
-          ]
-        ],
-        "classification_report": {
-          "0.0": {
-            "precision": 0.9442887175893483,
-            "recall": 0.6725939790984246,
-            "f1-score": 0.7856140798367555,
-            "support": 32055.0
-          },
-          "1.0": {
-            "precision": 0.030479160759852564,
-            "recall": 0.30935251798561153,
-            "f1-score": 0.0554910311007872,
-            "support": 695.0
-          },
-          "2.0": {
-            "precision": 0.35880480039186874,
-            "recall": 0.5526216522067144,
-            "f1-score": 0.4351054351054351,
-            "support": 5302.0
-          },
-          "accuracy": 0.6492431409649952,
-          "macro avg": {
-            "precision": 0.4445242262470232,
-            "recall": 0.5115227164302502,
-            "f1-score": 0.42540351534765924,
-            "support": 38052.0
-          },
-          "weighted avg": {
-            "precision": 0.846019681244937,
-            "recall": 0.6492431409649952,
-            "f1-score": 0.7234404134529396,
-            "support": 38052.0
-          }
-        },
-        "roc_auc_ovr_macro": 0.7624805923550131
+        "roc_auc_ovr_macro": 0.7787184344750985
       }
     },
     "agent_log": [
@@ -622,10 +222,6 @@
         "status": "success"
       },
       {
-        "agent": "DeepLearningAgent",
-        "status": "success"
-      },
-      {
         "agent": "SafetyReviewAgent",
         "status": "success"
       }
@@ -640,8 +236,8 @@
           "validation_score": 0.4276054073046727
         },
         "status": "success",
-        "message_id": "ea6931a1-6df5-4554-8aa4-dd3b25632379",
-        "created_at": "2026-11-27T08:27:45.987661+00:00"
+        "message_id": "63c5f2a8-1556-481c-998f-fb6964ed6f06",
+        "created_at": "2026-11-27T08:56:29.488221+00:00"
       },
       {
         "sender": "ModelBAgent",
@@ -649,11 +245,11 @@
         "message_type": "model_ready",
         "payload": {
           "model": "ModelBAgent",
-          "validation_score": 0.4488891825606462
+          "validation_score": 0.40752898846562724
         },
         "status": "success",
-        "message_id": "2bf30c3a-f144-450c-8930-26bf37bff644",
-        "created_at": "2026-11-27T08:29:02.766134+00:00"
+        "message_id": "a65268a1-e7d3-43d2-b263-122eda42bb89",
+        "created_at": "2026-11-27T08:58:03.548957+00:00"
       },
       {
         "sender": "ConsensusAgent",
@@ -663,8 +259,8 @@
           "rows": 38052
         },
         "status": "success",
-        "message_id": "29bc32c3-2e49-4e4e-aa0f-bb3c9a8ce7d5",
-        "created_at": "2026-11-27T08:29:02.788932+00:00"
+        "message_id": "381f5da4-2519-4dcd-a7d5-88fc9efb991e",
+        "created_at": "2026-11-27T08:58:03.551541+00:00"
       },
       {
         "sender": "ConsensusAgent",
@@ -674,8 +270,8 @@
           "rows": 38052
         },
         "status": "success",
-        "message_id": "55cc89c9-e208-49a4-8265-6fd433cdb276",
-        "created_at": "2026-11-27T08:29:02.788957+00:00"
+        "message_id": "d95f9abe-63dc-418d-9f0a-2521d0402b9d",
+        "created_at": "2026-11-27T08:58:03.551572+00:00"
       },
       {
         "sender": "ExplanationAgent",
@@ -685,8 +281,8 @@
           "created": true
         },
         "status": "success",
-        "message_id": "2fa1f380-5adf-4b15-9b2f-1df0bc8b40a6",
-        "created_at": "2026-11-27T08:29:02.855298+00:00"
+        "message_id": "c9e8d8d9-3b37-4df2-ab87-abfc45c28735",
+        "created_at": "2026-11-27T08:58:03.649125+00:00"
       },
       {
         "sender": "EvaluationAgent",
@@ -696,19 +292,8 @@
           "complete": true
         },
         "status": "success",
-        "message_id": "de70bcf5-ecce-4d64-8b1c-d89dbf2f8133",
-        "created_at": "2026-11-27T08:29:02.943209+00:00"
-      },
-      {
-        "sender": "DeepLearningAgent",
-        "receiver": "SafetyReviewAgent",
-        "message_type": "deep_learning_ready",
-        "payload": {
-          "complete": true
-        },
-        "status": "success",
-        "message_id": "5c7f92a4-a5a2-4f5c-9b95-4a543006f7f0",
-        "created_at": "2026-11-27T08:29:39.761552+00:00"
+        "message_id": "b1787851-30dd-4af9-8ab9-8041caf7e041",
+        "created_at": "2026-11-27T08:58:03.765081+00:00"
       },
       {
         "sender": "SafetyReviewAgent",
@@ -718,8 +303,8 @@
           "valid_output": true
         },
         "status": "success",
-        "message_id": "ce17e8b7-3bb1-4033-99f0-f4ebd43d8289",
-        "created_at": "2026-11-27T08:29:39.764539+00:00"
+        "message_id": "c8b50d80-d36a-499b-b81f-0330954ace7e",
+        "created_at": "2026-11-27T08:58:03.766249+00:00"
       }
     ],
     "safety_review": {
@@ -731,11 +316,11 @@
         "Có mẫu có xác suất lớp cao nhất dưới 0.60; cần thận trọng khi diễn giải."
       ],
       "evaluation_summary": {
-        "accuracy": 0.7895248607169137,
-        "precision_macro": 0.43488861229670367,
-        "recall_macro": 0.4810453170528593,
-        "f1_macro": 0.44615898847991753,
-        "roc_auc_ovr_macro": 0.7749454550335654
+        "accuracy": 0.8212446126353411,
+        "precision_macro": 0.4521034921196057,
+        "recall_macro": 0.45412069180563347,
+        "f1_macro": 0.4505974994188167,
+        "roc_auc_ovr_macro": 0.7787184344750985
       }
     }
   }
