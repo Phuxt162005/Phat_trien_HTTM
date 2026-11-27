@@ -36,7 +36,8 @@ Notebook gốc được giữ nguyên trong \`legacy/\`. Phần supervised ML đ
 - \`src/project01/ml/evaluation.py\`: Accuracy, Macro Precision/Recall/F1, ROC-AUC, confusion matrix và classification report.
 - \`src/project01/ml/pipeline.py\`: điều phối thí nghiệm và lưu model artifacts/metrics.
 - \`src/project01/ml/deep_learning.py\`: PyTorch MLP tùy chọn, class weights, ReduceLROnPlateau, checkpoint theo validation và Early Stopping.
-- \`scripts/train_ml.py\`: điểm chạy pipeline.
+- \`src/project01/agents/ml_agents.py\`: ModelAAgent (Logistic Regression), ModelBAgent (Random Forest), ConsensusAgent (Soft Voting), DeepLearningAgent (PyTorch MLP tùy chọn), ExplanationAgent, EvaluationAgent, SafetyReviewAgent và MLCoordinatorAgent.
+- \`scripts/train_ml.py\`: điểm chạy luồng Multi-Agent ML/DL; ghi agent log và message log vào báo cáo tổng hợp.
 
 Chỉ \`diabetes01\` và \`diabetes04\` được dùng cho supervised classification. \`diabetes02\` bị từ chối ở bước preprocessing nếu không có target hợp lệ.
 
