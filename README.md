@@ -118,6 +118,30 @@ Báo cáo được lưu tại `models/diabetes04/feature_diagnostics.json`, gồ
 
 Quy trình chỉ fit mô hình trên train, tính permutation importance và confusion pairs trên validation; không truy cập test. Permutation importance phản ánh mức đóng góp dự đoán trên mẫu validation, không phải quan hệ nhân quả. Standardized mean difference chỉ mô tả mức tách biệt biên của đặc trưng numeric, không chứng minh ý nghĩa lâm sàng. Các kết quả này dùng để định hướng thí nghiệm tiếp theo, không tự động loại bỏ đặc trưng.
 
+### Phân loại kiểu đặc trưng và benchmark mô hình đa lớp
+
+Báo cáo feature diagnostics phân loại các cột đã mã hóa số theo ngữ nghĩa của diabetes04:
+- Binary: biến nhị phân như `HighBP`, `HighChol`, `Smoker`, `Sex`.
+- Ordinal: `Age`, `Education`, `Income`, `GenHlth`.
+- Continuous/count: `BMI`, `MentHlth`, `PhysHlth`.
+- Các cột dạng chuỗi được xem là categorical; với dataset khác, biến số có đúng hai giá trị 0/1 được nhận diện là binary, các biến số khác mặc định continuous.
+
+Báo cáo bổ sung `feature_types` và `typed_feature_profiles_train`, giúp không diễn giải mọi cột số như biến liên tục. Quy tắc trên dựa trên định nghĩa trường dữ liệu diabetes04; cần kiểm tra metadata nếu thay dataset hoặc schema.
+
+Chạy benchmark so sánh Random Forest, Extra Trees và HistGradientBoosting:
+
+```bash
+python scripts/benchmark_models.py --dataset diabetes04 --estimators 120 --n-jobs 1
+```
+
+Benchmark thử các cấu hình baseline, class weight (với mô hình hỗ trợ) và random oversampling 20%/50%. Có 11 ứng viên được so sánh. Tiêu chí chọn là Macro F1 trên validation, sau đó dùng F1 và Recall lớp thiểu số để phá hòa. Mô hình thắng cuộc được fit lại trên train+validation. **Không truy cập test và không tạo test metrics**, vì tập test đã được xem trong các thí nghiệm trước.
+
+Kết quả:
+- `models/diabetes04/model_benchmark.json`
+- `models/diabetes04/selected_benchmark_model.joblib`
+
+Đây là benchmark phát triển mô hình, không phải đánh giá lâm sàng. Không chọn mô hình chỉ theo Accuracy hoặc Minority Recall riêng lẻ; phải xem đầy đủ precision/recall/F1 của từng lớp và confusion matrix.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
 Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
