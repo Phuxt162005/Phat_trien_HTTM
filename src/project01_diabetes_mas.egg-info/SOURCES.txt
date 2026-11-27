@@ -13,6 +13,7 @@ src/project01/config/settings.py
 src/project01/data/__init__.py
 src/project01/data/loader.py
 src/project01/knowledge/__init__.py
+src/project01/knowledge/ingestion.py
 src/project01/knowledge/neo4j_config.py
 src/project01/knowledge/neo4j_repository.py
 src/project01/ml/__init__.py
@@ -34,6 +35,7 @@ src/project01_diabetes_mas.egg-info/top_level.txt
 tests/test_agent_contracts.py
 tests/test_classwise_tuning.py
 tests/test_dataset_loader.py
+tests/test_document_ingestion.py
 tests/test_feature_diagnostics.py
 tests/test_ml_agents.py
 tests/test_ml_deep_learning.py
