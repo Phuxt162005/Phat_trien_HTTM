@@ -110,3 +110,22 @@ Các liên kết dưới đây được tìm thấy trên tên miền Vinmec tro
 | VIN-047 | Tổng quan về bệnh đái tháo đường | Tổng quan và phân loại | https://www.vinmec.com/vie/bai-viet/tong-quan-ve-benh-dai-thao-duong-vi |
 
 **Lưu ý trùng lặp:** VIN-045 trùng URL với VIN-006; VIN-046 trùng URL với VIN-021; VIN-047 trùng URL với VIN-001. Đây là kết quả tìm kiếm được ghi nhận để đối chiếu, không phải ba tài liệu mới. Khi ingest phải khử trùng theo canonical URL/document hash. Vì vậy, danh mục có 47 mã nhưng không tương đương 47 tài liệu độc lập.
+
+## 9. Bổ sung nguồn đã tìm thấy qua rà soát web (VIN-048 đến VIN-053)
+
+Các trang dưới đây đã xuất hiện trong kết quả tìm kiếm Vinmec tại thời điểm rà soát 2026-11-27. Đây là xác nhận URL/tựa đề và chủ đề hiển thị từ kết quả tìm kiếm, không thay thế bước kiểm tra trang gốc, ngày cập nhật, người thẩm định và quyền sử dụng trước ingestion.
+
+| ID | Tài liệu | Chủ đề | Liên kết |
+|---|---|---|---|
+| VIN-048 | Cách chăm sóc bàn chân người bệnh tiểu đường | Kiểm tra bàn chân, chăm sóc và nhận biết tổn thương | https://www.vinmec.com/vie/bai-viet/cach-cham-soc-ban-chan-nguoi-benh-tieu-duong-vi |
+| VIN-049 | Đái tháo đường type mấy bắt buộc phải dùng insulin? | Insulin theo type bệnh và bối cảnh điều trị | https://www.vinmec.com/vie/bai-viet/dai-thao-duong-type-may-bat-buoc-phai-dung-insulin-vi |
+| VIN-050 | Mối liên quan giữa đái tháo đường và bệnh tim mạch | Nguy cơ tim mạch và quản lý yếu tố nguy cơ | https://www.vinmec.com/vie/bai-viet/moi-lien-quan-giua-dai-thao-duong-va-benh-tim-mach-vi |
+| VIN-051 | Bệnh tiền đái tháo đường được điều trị như thế nào? | Can thiệp lối sống và nội dung điều trị tiền ĐTĐ | https://www.vinmec.com/vie/bai-viet/benh-tien-dai-thao-duong-duoc-dieu-tri-nhu-nao-vi |
+| VIN-052 | Ai có nguy cơ cao bị đái tháo đường? | Yếu tố nguy cơ và nhóm cần chú ý sàng lọc | https://www.vinmec.com/vie/bai-viet/ai-co-nguy-co-cao-bi-dai-thao-duong-vi |
+| VIN-053 | Hướng dẫn theo dõi tiến triển bệnh đái tháo đường typ 2 | Theo dõi diễn tiến và dấu hiệu cảnh báo biến chứng | https://www.vinmec.com/vie/bai-viet/huong-dan-theo-doi-tien-trien-benh-dai-thao-duong-typ-2-vi |
+
+### Lưu ý kiểm soát chất lượng bổ sung
+- VIN-053 trùng URL với VIN-023; giữ một bản nội dung sau khi xác nhận canonical URL.
+- Một số bài Vinmec nêu mục tiêu HbA1c, huyết áp, chỉ định insulin hoặc xử trí thuốc theo bối cảnh riêng. Không trích các con số đó thành khuyến cáo áp dụng cho mọi người; phải đối chiếu guideline hiện hành và giữ đúng bối cảnh bệnh nhân.
+- Kết quả tìm kiếm có thể hiển thị nội dung cũ hoặc trích đoạn không đầy đủ. Phải đọc trang gốc trước khi đưa vào corpus.
+- Tổng danh mục hiện có 53 mã; trong đó có mã trùng URL đã ghi rõ ở các mục trên. Số mã không phải số tài liệu độc lập.
