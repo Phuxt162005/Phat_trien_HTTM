@@ -61,6 +61,13 @@ python scripts/train_ml.py --datasets diabetes01
 
 Artifacts được lưu trong \`models/<dataset>/\`, gồm model \`.joblib\`, preprocessing pipeline và \`metrics.json\`. Khi bật Deep Learning, state dict và preprocessing riêng của MLP cũng được lưu.
 
+
+### Xử lý mất cân bằng lớp trong ML
+
+- Với Random Forest trên bài toán đa lớp, chỉ tập train và tập train+validation được áp dụng random oversampling một phần; tập validation và test giữ nguyên phân phối gốc.
+- Ngưỡng mặc định đưa lớp thiểu số lên tối thiểu 20% số mẫu của lớp đa số, tránh nhân bản toàn bộ lớp thiểu số đến mức cân bằng tuyệt đối.
+- Báo cáo metrics lưu phân bố lớp trước và sau oversampling. Cần so sánh Macro F1, Recall từng lớp và confusion matrix; không đánh giá mô hình chỉ bằng Accuracy.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
 Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
