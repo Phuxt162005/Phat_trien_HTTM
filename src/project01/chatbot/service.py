@@ -80,21 +80,21 @@ class ChatbotService:
                 "clinical_decision": False,
             }
 
-        if not _is_medical_query(clean_query):
-            return {
-                "status": "out_of_scope",
-                "intent": "general",
-                "answer": "Tôi hiện tập trung hỗ trợ thông tin về bệnh đái tháo đường. Bạn có thể hỏi về triệu chứng, yếu tố nguy cơ, xét nghiệm, biến chứng, dinh dưỡng hoặc theo dõi bệnh.",
-                "citations": [],
-                "retrieval": None,
-                "clinical_decision": False,
-            }
-
         if _is_urgent(clean_query):
             return {
                 "status": "urgent",
                 "intent": "medical_urgent",
                 "answer": "Các dấu hiệu bạn mô tả có thể cần được xử trí khẩn cấp. Hãy liên hệ cấp cứu hoặc đến cơ sở y tế gần nhất ngay; không chờ câu trả lời từ chatbot.",
+                "citations": [],
+                "retrieval": None,
+                "clinical_decision": False,
+            }
+
+        if not _is_medical_query(clean_query):
+            return {
+                "status": "out_of_scope",
+                "intent": "general",
+                "answer": "Tôi hiện tập trung hỗ trợ thông tin về bệnh đái tháo đường. Bạn có thể hỏi về triệu chứng, yếu tố nguy cơ, xét nghiệm, biến chứng, dinh dưỡng hoặc theo dõi bệnh.",
                 "citations": [],
                 "retrieval": None,
                 "clinical_decision": False,
