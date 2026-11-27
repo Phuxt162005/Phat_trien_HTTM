@@ -2,21 +2,34 @@
 
 ## Trạng thái hiện tại
 
-Đây là bản tái cấu trúc giai đoạn 1. Notebook gốc được giữ nguyên trong `legacy/` để đối chiếu và chuyển chức năng dần, không xóa kết quả thí nghiệm cũ.
+Đây là bản tái cấu trúc giai đoạn 1. Notebook gốc được giữ trong `legacy/` để đối chiếu và chuyển chức năng dần; không xóa kết quả thí nghiệm cũ.
 
-### Đã tạo trong bản khởi đầu
+### Ba dataset chính thức
+
+| Dataset | Vai trò | Target | Mục đích |
+|---|---|---|---|
+| `diabetes01.csv` | Original supervised | `diabetes` | Phân loại nhị phân |
+| `diabetes02.csv` | External unlabeled | Không có | EDA/khảo sát dữ liệu; không dùng làm nhãn huấn luyện phân loại |
+| `diabetes04.csv` | Original supervised | `Diabetes_012` | Phân loại đa lớp |
+
+**Lưu ý quan trọng:** `diabetes02.csv` không có cột nhãn bệnh tiểu đường. Không tự suy diễn hoặc tạo nhãn từ glucose, HbA1c hay các chỉ số khác để đưa vào bài toán supervised learning. Chỉ sử dụng dataset này cho các mục tiêu phù hợp với dữ liệu không nhãn cho đến khi có nhãn hợp lệ và nguồn xác thực.
+
+Đặt ba file CSV tại `data/raw/` trên máy local. Các file dữ liệu thô được loại khỏi Git theo `.gitignore`; không sửa nội dung CSV gốc. Dataset cũ `diabetes03` không còn thuộc bộ ba dataset chính thức của dự án.
+
+## Các thành phần đã có
+
 - Cấu trúc project Python độc lập với notebook.
-- Cấu hình riêng cho ba dataset gốc: `diabetes01`, `diabetes03`, `diabetes04`.
-- Dataset loader không ghi đè hoặc sửa file CSV gốc.
+- Cấu hình riêng cho ba dataset chính thức.
+- Dataset loader hỗ trợ cả dữ liệu có target và không có target.
 - Hợp đồng `AgentMessage`, `AgentResult`, `BaseAgent`.
-- `PatientDataAgent` kiểm tra chất lượng dữ liệu dạng bảng.
-- `RuleBasedAgent` thực hiện rà soát kỹ thuật dữ liệu.
-- `CoordinatorAgent` chạy audit ban đầu và ghi execution trace.
-- Script `scripts/audit_datasets.py` xuất báo cáo JSON.
-- Bộ test cơ bản cho hợp đồng Agent và kiểm tra dữ liệu.
+- `PatientDataAgent` kiểm tra missing values, duplicate rows, duplicate columns, constant columns, infinite values và target distribution khi có target.
+- `RuleBasedAgent` phân loại phát hiện thành passed/warning/failed; không tự động xóa bản ghi trùng.
+- `CoordinatorAgent` điều phối audit và ghi execution trace.
+- Script `scripts/audit_datasets.py` audit ba dataset và xuất JSON.
 
-### Chưa tích hợp trong bản khởi đầu
-Các phần ML/DL, mô hình đã huấn luyện, Neo4j, Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được chuyển theo từng module sau khi đối chiếu logic và artifact gốc; không giả định rằng chỉ tạo thư mục là đã hoàn thành chức năng.
+## Những phần chưa tích hợp hoàn chỉnh
+
+Các phần ML/DL, mô hình đã huấn luyện, Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
 
 ## 1. Chuẩn bị môi trường
 
@@ -33,17 +46,17 @@ python -m pip install --upgrade pip
 pip install -e ".[test]"
 ```
 
-## 2. Đặt ba dataset gốc
+## 2. Đặt dataset
 
-Đặt đúng các file CSV hiện có vào `data/raw/`:
+Đặt đúng các file CSV vào:
 
 ```text
 data/raw/diabetes01.csv
-data/raw/diabetes03.csv
+data/raw/diabetes02.csv
 data/raw/diabetes04.csv
 ```
 
-Không đổi tên cột, nhãn hoặc nội dung file. Nếu file của bạn đang có tên/đường dẫn khác, hãy cung cấp để cập nhật cấu hình có kiểm soát.
+Không đổi tên cột, nhãn hoặc nội dung file. Nếu file đang có tên/đường dẫn khác, cập nhật cấu hình có kiểm soát.
 
 ## 3. Chạy audit dữ liệu
 
@@ -51,7 +64,7 @@ Không đổi tên cột, nhãn hoặc nội dung file. Nếu file của bạn �
 python scripts/audit_datasets.py
 ```
 
-Báo cáo được ghi vào `data/manifests/original_dataset_audit.json`.
+Báo cáo được ghi vào `data/manifests/original_dataset_audit.json`. Trạng thái warning do missing values hoặc duplicate rows không làm audit thất bại; các vấn đề cấu trúc nghiêm trọng như duplicate columns/infinite values sẽ được đánh dấu failed.
 
 ## 4. Chạy test
 
@@ -63,13 +76,15 @@ pytest
 
 Sao chép `.env.example` thành `.env` rồi điền thông tin Neo4j/LLM trên máy cá nhân khi cần. Không commit `.env`.
 
-## Nguyên tắc dữ liệu
-- Ba dataset gốc được giữ riêng biệt.
-- Không tự động gộp `diabetes01` và `diabetes03`; cần audit trùng lặp trước khi diễn giải kết quả tổng hợp.
+## Nguyên tắc dữ liệu và an toàn
+
+- Ba dataset chính thức được giữ riêng biệt, không tự động gộp.
+- Không tự động xóa duplicate rows; cần đánh giá trước khi xử lý.
 - Dataset bên ngoài phải có nguồn, giấy phép, định nghĩa target và metadata.
-- Không trộn dữ liệu cá nhân cấp bệnh nhân với số liệu dịch tễ tổng hợp trong cùng một tập huấn luyện nếu chưa có thiết kế phương pháp phù hợp.
+- Không trộn dữ liệu cá nhân cấp bệnh nhân với số liệu dịch tễ tổng hợp trong cùng tập huấn luyện nếu chưa có thiết kế phương pháp phù hợp.
 - Hệ thống là prototype nghiên cứu/giáo dục, không phải công cụ chẩn đoán hoặc kê đơn lâm sàng.
 
 ## Tài liệu tham chiếu
-- `legacy/project01_diabetes_ver_02_original.ipynb`: notebook mới nhất được cung cấp trong cuộc trò chuyện, giữ nguyên làm bản tham chiếu.
-- `project_architecture_multiagent_diabet_v1.pdf`: đặc tả kiến trúc Multi-Agent của dự án (được cung cấp riêng, không sao chép vào source tree).
+
+- `legacy/project01_diabetes_ver_02_original.ipynb`: notebook được giữ làm bản tham chiếu.
+- `project_architecture_multiagent_diabet_v1.pdf`: đặc tả kiến trúc Multi-Agent được cung cấp riêng.
