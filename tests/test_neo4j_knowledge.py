@@ -39,6 +39,8 @@ class FakeSession:
         self.calls.append((cypher, params))
         if "RETURN 1 AS ok" in cypher:
             return FakeResult([FakeRecord(ok=1)])
+        if "RETURN count(chunk) AS stored" in cypher:
+            return FakeResult([FakeRecord(stored=len(params.get("rows", [])))])
         return FakeResult(self.records)
 
 
