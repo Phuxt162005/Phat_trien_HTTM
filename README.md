@@ -101,6 +101,23 @@ python scripts/tune_minority_threshold.py --dataset diabetes04 --rf-estimators 1
 
 Báo cáo validation lưu tại `models/diabetes04/minority_threshold_tuning.json`; mô hình Random Forest đã fit trên train+validation lưu tại `models/diabetes04/random_forest_minority_factor.joblib`. Báo cáo ghi rõ hệ số được chọn, metrics từng lớp, các ứng viên và trạng thái không đánh giá test. Khi triển khai dự đoán, cần áp dụng đúng hệ số đã chọn lên cột xác suất tương ứng với nhãn lớp thiểu số trước khi lấy `argmax`; không gọi `predict()` trực tiếp nếu muốn dùng quy tắc đã tuning. Hệ số không cải thiện calibration và không chứng minh giá trị lâm sàng.
 
+### Phân tích đặc trưng và lỗi phân loại đa lớp
+
+Trước khi tiếp tục điều chỉnh hệ số lớp thiểu số, cần kiểm tra đặc trưng nào thực sự đóng góp vào dự đoán và các lớp đang bị nhầm lẫn ở đâu. Chạy:
+
+```bash
+python scripts/diagnose_features.py --dataset diabetes04 --rf-estimators 120 --validation-sample-size 10000 --permutation-repeats 3
+```
+
+Báo cáo được lưu tại `models/diabetes04/feature_diagnostics.json`, gồm:
+
+- Permutation importance theo Macro F1 trên một mẫu validation.
+- Các cặp nhãn thực tế/dự đoán bị nhầm nhiều nhất trong mẫu validation.
+- Thống kê numeric theo lớp và standardized mean difference giữa từng cặp lớp trên train.
+- Phân bố các giá trị categorical phổ biến theo lớp trên train.
+
+Quy trình chỉ fit mô hình trên train, tính permutation importance và confusion pairs trên validation; không truy cập test. Permutation importance phản ánh mức đóng góp dự đoán trên mẫu validation, không phải quan hệ nhân quả. Standardized mean difference chỉ mô tả mức tách biệt biên của đặc trưng numeric, không chứng minh ý nghĩa lâm sàng. Các kết quả này dùng để định hướng thí nghiệm tiếp theo, không tự động loại bỏ đặc trưng.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
 Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
