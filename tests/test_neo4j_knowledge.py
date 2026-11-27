@@ -76,6 +76,8 @@ def test_repository_health_and_search_are_parameterized():
     assert results[0]["entity"]["id"] == "d1"
     cypher, params = driver.session_instance.calls[-1]
     assert "db.index.fulltext.queryNodes" in cypher
+    assert "CITES_SOURCE|FROM_SOURCE" in cypher
+    assert "source.source_url" in cypher
     assert params == {
         "index_name": "diabetes_knowledge_fulltext",
         "query": '"diabetes"',
