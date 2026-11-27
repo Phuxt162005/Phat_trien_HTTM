@@ -126,3 +126,42 @@ def test_hybrid_fusion_preserves_graph_citations_for_vector_match():
     assert result[0]["url"] == "https://example.org"
     assert result[0]["sources"][0]["page_start"] == 3
     assert result[0]["retrieval_methods"] == ["vector", "graph"]
+
+
+def test_graph_results_fall_back_to_document_label_and_source_metadata():
+    class Repository:
+        def vector_search(self, embedding, limit):
+            return []
+
+        def fulltext_search_chunks(self, query, limit):
+            return []
+
+        def search(self, query, limit):
+            return [{
+                "labels": ["MedicalDocument"],
+                "entity": {
+                    "doc_id": "vinmec:doc-123",
+                    "label": "Tổng quan bệnh tiểu đường",
+                    "question": "Bệnh tiểu đường là gì?",
+                    "source_url": "https://example.org/diabetes",
+                    "source_name": "Vinmec",
+                    "publisher": "Vinmec",
+                },
+                "evidence": [{
+                    "document_id": "vinmec:doc-123",
+                    "title": None,
+                    "url": None,
+                    "source": None,
+                }],
+            }]
+
+    embedder = SentenceTransformerEmbedder(
+        EmbeddingConfig(model_name="fake", dimension=4), model=FakeEmbeddingModel(),
+    )
+    result = HybridRetriever(Repository(), embedder).retrieve("bệnh tiểu đường")
+    graph = result["results"][0]
+    assert graph["id"] == "vinmec:doc-123"
+    assert graph["document_id"] == "vinmec:doc-123"
+    assert graph["title"] == "Tổng quan bệnh tiểu đường"
+    assert graph["url"] == "https://example.org/diabetes"
+    assert graph["source"]["name"] == "Vinmec"
