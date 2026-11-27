@@ -64,7 +64,7 @@ def _lucene_terms(text: str) -> str:
     """
     terms = re.findall(r"[\wÀ-ỹ]+", text, flags=re.UNICODE)
     stop_words = {
-        "la", "gì", "gi", "của", "cua", "và", "va", "các", "cac", "những",
+        "la", "là", "gì", "gi", "của", "cua", "và", "va", "các", "cac", "những",
         "nhung", "cho", "một", "mot", "trong", "được", "duoc", "theo", "về",
         "ve", "nào", "nao", "như", "nhu", "hay", "có", "co", "không", "khong",
         "thế", "the", "what", "is", "are", "the", "of", "for", "and", "to",
