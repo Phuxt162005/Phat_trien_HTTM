@@ -90,3 +90,23 @@
 12. VIN-032 đến VIN-036 Thai kỳ.
 
 **Lưu ý:** Danh mục này là tập hợp liên kết và metadata. Nó không có nghĩa là 36 bài đã được tải xuống hoặc nạp vào Neo4j.
+
+## 8. Bổ sung sau rà soát nguồn Vinmec (VIN-037 đến VIN-047)
+
+Các liên kết dưới đây được tìm thấy trên tên miền Vinmec trong đợt rà soát ngày 2026-11-27. Trước khi ingest, vẫn cần mở từng trang để xác nhận nội dung, ngày cập nhật, tác giả/thẩm định và quyền sử dụng.
+
+| ID | Tài liệu | Chủ đề | Liên kết |
+|---|---|---|---|
+| VIN-037 | Cảnh giác biến chứng thần kinh ở bệnh nhân đái tháo đường | Biến chứng thần kinh ngoại biên, tự chủ và phòng ngừa | https://www.vinmec.com/vie/bai-viet/canh-giac-bien-chung-kinh-o-benh-nhan-dai-thao-duong-vi |
+| VIN-038 | Các biến chứng tim mạch trên bệnh nhân tiểu đường | Biến chứng tim mạch và mạch máu | https://www.vinmec.com/vie/bai-viet/cac-bien-chung-tim-mach-tren-benh-nhan-tieu-duong-vi |
+| VIN-039 | Tầm soát đái tháo đường typ 2 | Sàng lọc người có nguy cơ | https://www.vinmec.com/vie/bai-viet/tam-soat-dai-thao-duong-tuyp-2-vi |
+| VIN-040 | Các biến chứng nguy hiểm của bệnh đái tháo đường type 2 | Tổng quan biến chứng type 2 | https://www.vinmec.com/vie/bai-viet/cac-bien-chung-nguy-hiem-cua-benh-dai-thao-duong-type-2-vi |
+| VIN-041 | Mất kiểm soát đường máu ở người đái tháo đường | Tăng đường huyết và yếu tố liên quan | https://www.vinmec.com/vie/bai-viet/mat-kiem-soat-duong-mau-o-nguoi-dai-thao-duong-vi |
+| VIN-042 | Biến chứng thận trên bệnh nhân đái tháo đường | Bệnh thận đái tháo đường và yếu tố nguy cơ | https://www.vinmec.com/vie/bai-viet/bien-chung-tren-benh-nhan-dai-thao-duong-vi |
+| VIN-043 | Tiền đái tháo đường: Những điều cần biết | Định nghĩa và phân loại tiền đái tháo đường | https://www.vinmec.com/vie/bai-viet/tien-dai-thao-duong-nhung-dieu-can-biet-vi |
+| VIN-044 | Giải đáp thắc mắc về bệnh đái tháo đường không phụ thuộc insulin | Kiến thức chung về type 2 và biến chứng | https://www.vinmec.com/vie/bai-viet/giai-dap-thac-mac-ve-benh-dai-thao-duong-khong-phu-thuoc-insulin-vi |
+| VIN-045 | Các xét nghiệm cần thực hiện trong chẩn đoán đái tháo đường | Xét nghiệm chẩn đoán và khảo sát biến chứng | https://www.vinmec.com/vie/bai-viet/cac-xet-nghiem-can-thuc-hien-trong-chan-doan-dai-thao-duong-vi |
+| VIN-046 | Đái tháo đường biến chứng thế nào? | Biến chứng cấp và mạn | https://www.vinmec.com/vie/bai-viet/dai-thao-duong-bien-chung-nao-vi |
+| VIN-047 | Tổng quan về bệnh đái tháo đường | Tổng quan và phân loại | https://www.vinmec.com/vie/bai-viet/tong-quan-ve-benh-dai-thao-duong-vi |
+
+**Lưu ý trùng lặp:** VIN-045 trùng URL với VIN-006; VIN-046 trùng URL với VIN-021; VIN-047 trùng URL với VIN-001. Đây là kết quả tìm kiếm được ghi nhận để đối chiếu, không phải ba tài liệu mới. Khi ingest phải khử trùng theo canonical URL/document hash. Vì vậy, danh mục có 47 mã nhưng không tương đương 47 tài liệu độc lập.
