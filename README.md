@@ -26,6 +26,7 @@
 - `RuleBasedAgent` phân loại phát hiện thành passed/warning/failed; không tự động xóa bản ghi trùng.
 - `CoordinatorAgent` điều phối audit và ghi execution trace.
 - Script `scripts/audit_datasets.py` audit ba dataset và xuất JSON.
+- `KnowledgeGraphAgent` và Neo4j repository: tìm kiếm tri thức dạng graph, giữ provenance và trả kết quả theo AgentResult.
 
 ## Pipeline ML/DL
 
@@ -164,9 +165,21 @@ Báo cáo lưu tại `models/diabetes04/classwise_probability_tuning.json`; mô 
 
 Hệ số chỉ thay đổi quyết định phân lớp, không cải thiện calibration. Đây là thí nghiệm phát triển mô hình, không phải xác nhận lâm sàng. Tập test đã được xem trong các thí nghiệm trước nên tiếp tục được giữ ngoài quá trình lựa chọn.
 
+## Neo4j Knowledge Graph
+
+Đã có lớp kết nối Neo4j, schema idempotent, full-text graph retrieval và `KnowledgeGraphAgent`. Cài đặt và chạy:
+
+```bash
+pip install -e ".[neo4j]"
+# Điền NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD, NEO4J_DATABASE trong .env
+python scripts/init_neo4j.py
+```
+
+Schema ở `knowledge/neo4j/schema.cypher` chỉ tạo constraints/index; không seed dữ liệu y khoa và không xóa graph hiện tại. Xem `knowledge/neo4j/README.md` trước khi chạy. Agent chỉ trả bằng chứng và provenance; chưa sinh câu trả lời bằng LLM.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
-Neo4j/Cypher, ingestion PDF/web, Hybrid RAG, chatbot và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
+Ingestion PDF/web, vector retrieval, Hybrid RAG, chatbot, coordinator workflow tích hợp đầy đủ và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
 
 ## 1. Chuẩn bị môi trường
 
