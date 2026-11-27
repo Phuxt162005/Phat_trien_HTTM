@@ -164,7 +164,7 @@ def train_deep_learning_model(
                 model(validation_tensor), dim=1
             ).cpu().numpy()
         score, metric = _validation_metric(
-            y_validation, validation_probabilities, classes, prepared.profile["task"]
+            y_validation, validation_probabilities, classes, prepared.profile["task_kind"]
         )
         history["train_loss"].append(float(np.mean(losses)))
         history["validation_score"].append(score)
@@ -237,7 +237,7 @@ def train_deep_learning_model(
         test_probabilities=np.empty((0, len(classes))),
     )
     output.test_probabilities = output.predict_proba(prepared.X_test)
-    output.test_predictions = output.classes and np.asarray(output.classes)[
+    output.test_predictions = np.asarray(output.classes)[
         np.argmax(output.test_probabilities, axis=1)
     ]
     return output
