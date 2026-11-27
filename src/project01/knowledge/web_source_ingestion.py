@@ -92,12 +92,60 @@ def extract_article(html: str) -> dict[str, str | None]:
         main = soup.find(attrs={"itemprop": "articleBody"})
     if main is None:
         main = soup.body or soup
-    for element in main(["script", "style", "noscript", "nav", "footer", "header", "aside", "form"]):
+    for element in main([
+        "script", "style", "noscript", "nav", "footer", "header", "aside",
+        "form", "button", "svg",
+    ]):
         element.decompose()
 
+    # Remove common in-article widgets without discarding clinical sections.
+    widget_markers = (
+        "related", "recommend", "social", "share", "breadcrumb",
+        "appointment", "booking", "consult", "contact-form", "tag-list",
+        "keyword", "promotion", "advertisement",
+    )
+    for element in list(main.find_all(True)):
+        marker = " ".join([
+            str(element.get("id") or ""),
+            " ".join(str(value) for value in (element.get("class") or [])),
+        ]).casefold()
+        if any(token in marker for token in widget_markers):
+            element.decompose()
+
     text = unescape(main.get_text(separator="\n", strip=True))
-    lines = [re.sub(r"\\s+", " ", line).strip() for line in text.splitlines()]
-    text = "\n".join(line for line in lines if line)
+    lines = [re.sub(r"\s+", " ", line).strip() for line in text.splitlines()]
+
+    def normalized_line(line: str) -> str:
+        import unicodedata
+        value = unicodedata.normalize("NFKD", line.casefold())
+        return "".join(char for char in value if not unicodedata.combining(char))
+
+    cleaned: list[str] = []
+    stop_markers = (
+        "bai viet lien quan", "tin lien quan", "de lai thong tin tu van",
+        "cam on ban da gui thong tin", "cac bai viet lien quan",
+        "tu van truc tuyen", "dang ky tu van",
+    )
+    noise_markers = (
+        "tai va dat lich kham tu dong tren ung dung my vinmec",
+        "tai ung dung my vinmec", "chia se", "xem them",
+        "hotline", "de lai thong tin tu van",
+    )
+    for line in lines:
+        if not line:
+            continue
+        normalized = normalized_line(line)
+        if any(marker in normalized for marker in stop_markers):
+            break
+        if normalized in {"tai day", "tai ngay", "chia se", "xem them", "bai viet lien quan"}:
+            continue
+        if any(marker in normalized for marker in noise_markers):
+            continue
+        if normalized.startswith(("cap nhat:", "tu khoa:", "tu khoa lien quan:")):
+            continue
+        cleaned.append(line)
+
+    text = "\n".join(cleaned)
     return {
         "title": title,
         "heading": heading,
