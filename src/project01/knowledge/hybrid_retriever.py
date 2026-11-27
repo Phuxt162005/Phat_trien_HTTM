@@ -23,9 +23,11 @@ class HybridRetriever:
         if candidate_multiplier < 1:
             raise ValueError("candidate_multiplier phải >= 1.")
 
-        candidate_limit = min(75, limit * candidate_multiplier)
+        candidate_limit = min(25, limit * candidate_multiplier)
         vector = self.embedder.embed_query(query)
-        vector_results = self.repository.vector_search(vector, limit=candidate_limit)
+        vector_results = self.repository.vector_search(vector, limit=min(75, candidate_limit))
+        keyword_search = getattr(self.repository, "fulltext_search_chunks", None)
+        keyword_results = keyword_search(query, limit=candidate_limit) if callable(keyword_search) else []
         graph_results = self.repository.search(query, limit=candidate_limit)
 
         vector_ranked = []
@@ -56,16 +58,24 @@ class HybridRetriever:
                 "page_end": next((ev.get("page_end") for ev in evidence_items if ev.get("page_end")), None),
             })
 
+        keyword_ranked = [
+            {**item, "id": item.get("id") or item.get("chunk_id"), "retrieval_method": "keyword"}
+            for item in keyword_results
+        ]
+
         fused = reciprocal_rank_fusion(
-            [vector_ranked, graph_ranked], k=self.rrf_k, limit=limit,
+            [vector_ranked, keyword_ranked, graph_ranked],
+            k=self.rrf_k, limit=limit,
         )
         return {
             "query": query,
             "results": fused,
             "retrieval": {
                 "vector_candidates": len(vector_ranked),
+                "keyword_candidates": len(keyword_ranked),
                 "graph_candidates": len(graph_ranked),
                 "fused_results": len(fused),
+                "retrieval_channels": ["vector", "keyword", "graph"],
                 "fusion": "reciprocal_rank_fusion",
             },
             "limitations": (
