@@ -166,11 +166,14 @@ def import_vinmec_articles(
                 results.append(item)
                 continue
             content = str(article.get("content") or "").strip()
-            if len(content) < min_chars:
+            heading = str(article.get("heading") or "").strip()
+            final_path = urlparse(final_url).path.rstrip("/")
+            if final_path in {"/vie", "/vie/bai-viet"} or not heading or len(content) < min_chars:
                 item.update({
-                    "status": "insufficient_content",
+                    "status": "invalid_or_insufficient_article",
                     "canonical_url": canonical,
                     "content_chars": len(content),
+                    "has_article_heading": bool(heading),
                 })
                 results.append(item)
                 continue
