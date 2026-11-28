@@ -57,6 +57,8 @@ class OpenAICompatibleChatClient:
 
     def generate(self, messages: list[dict[str, str]]) -> str:
         endpoint = self.config.base_url
+        if self.config.provider == "ollama" and not endpoint.endswith("/v1") and not endpoint.endswith("/v1/chat/completions"):
+            endpoint += "/v1"
         if not endpoint.endswith("/chat/completions"):
             endpoint += "/chat/completions"
         payload = {
