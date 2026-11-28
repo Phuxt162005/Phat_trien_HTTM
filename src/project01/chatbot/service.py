@@ -193,7 +193,12 @@ class ChatbotService:
                 ),
             })
             try:
-                answer = self.generator.generate(messages)
+                generated = self.generator.generate(messages)
+                referenced = {int(value) for value in re.findall(r"\\[(\\d+)\\]", generated)}
+                valid_references = {item["index"] for item in citations}
+                if referenced - valid_references:
+                    raise ValueError("LLM tạo ký hiệu trích dẫn không tồn tại trong danh sách bằng chứng.")
+                answer = generated
                 generation = "llm"
             except Exception:
                 generation = "fallback_llm_unavailable"
