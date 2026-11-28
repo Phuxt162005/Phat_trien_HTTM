@@ -140,8 +140,8 @@ def test_history_is_limited_and_invalid_roles_are_ignored():
     ChatbotService(FakeRetriever(medical_result()), generator=generator).answer(
         "Câu hỏi tiếp theo về tiểu đường", history=history
     )
-    assert len(generator.messages) == 10  # system + last 8 turns + current user
-    assert generator.messages[1]["content"] == "turn 2"
+    assert len(generator.messages) == 6  # system + last 4 turns + current user
+    assert generator.messages[1]["content"] == "turn 6"
 
 
 def test_llm_config_is_disabled_without_provider(monkeypatch):
@@ -157,6 +157,8 @@ def test_ollama_config_uses_openai_compatible_endpoint(monkeypatch):
     assert config is not None
     assert config.base_url.endswith("/v1")
     assert config.model == "qwen2.5:7b"
+    assert config.timeout_seconds == 120.0
+    assert config.max_tokens == 450
 
 
 
@@ -169,3 +171,23 @@ def test_llm_invalid_citations_are_rejected_and_fall_back(caplog):
     assert response["generation"] == "llm_invalid_citations"
     assert "Đái tháo đường là bệnh" in response["answer"]
     assert "citations are missing or invalid" in caplog.text
+
+
+
+def test_llm_config_rejects_non_positive_timeout(monkeypatch):
+    from project01.chatbot.llm import LLMConfig
+    monkeypatch.setenv("LLM_PROVIDER", "ollama")
+    monkeypatch.setenv("OLLAMA_MODEL", "qwen2.5:3b")
+    monkeypatch.setenv("LLM_TIMEOUT_SECONDS", "0")
+    import pytest
+    with pytest.raises(ValueError, match="LLM_TIMEOUT_SECONDS"):
+        LLMConfig.from_env()
+
+
+def test_history_content_is_truncated_before_prompting():
+    generator = FakeGenerator()
+    long_history = [{"role": "user", "content": "x" * 1500}]
+    ChatbotService(FakeRetriever(medical_result()), generator=generator).answer(
+        "Bệnh tiểu đường là gì?", history=long_history
+    )
+    assert len(generator.messages[1]["content"]) == 1000
