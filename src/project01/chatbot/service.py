@@ -8,6 +8,10 @@ class Retriever(Protocol):
     def retrieve(self, query: str, *, limit: int = 8, candidate_multiplier: int = 3) -> dict[str, Any]: ...
 
 
+class ChatGenerator(Protocol):
+    def generate(self, messages: list[dict[str, str]]) -> str: ...
+
+
 _MEDICAL_TERMS = (
     "đái tháo đường", "tiểu đường", "diabetes", "đường huyết", "glucose",
     "hba1c", "insulin", "hạ đường huyết", "tăng đường huyết", "biến chứng",
@@ -23,6 +27,13 @@ _URGENT_TERMS = (
     "lơ mơ", "ngất", "unconscious", "seizure", "chest pain",
     "difficulty breathing",
 )
+_SYSTEM_PROMPT = """Bạn là trợ lý cung cấp thông tin giáo dục sức khỏe về bệnh đái tháo đường.
+Chỉ sử dụng thông tin được cung cấp trong phần BẰNG CHỨNG. Không bịa kiến thức,
+số liệu, nguồn hoặc trích dẫn. Nếu bằng chứng không đủ hoặc mâu thuẫn, nói rõ
+điều đó và đề nghị người dùng hỏi nhân viên y tế. Dẫn nguồn bằng đúng ký hiệu
+[1], [2] tương ứng với danh sách bằng chứng. Không chẩn đoán, kê đơn, thay đổi
+liều thuốc hoặc đưa ra phác đồ cá nhân. Trả lời bằng tiếng Việt, rõ ràng, trực tiếp.
+Lịch sử hội thoại chỉ dùng để hiểu câu hỏi nối tiếp; không được xem là bằng chứng y khoa."""
 
 
 def _normalize(text: str) -> str:
@@ -44,59 +55,67 @@ def _is_urgent(text: str) -> bool:
     return any(term in normalized for term in _URGENT_TERMS)
 
 
+def _clean_history(history: list[dict[str, str]] | None) -> list[dict[str, str]]:
+    if not history:
+        return []
+    cleaned = []
+    for item in history[-8:]:
+        if not isinstance(item, dict):
+            continue
+        role = item.get("role")
+        content = item.get("content")
+        if role in {"user", "assistant"} and isinstance(content, str) and content.strip():
+            cleaned.append({"role": role, "content": content.strip()[:2000]})
+    return cleaned
+
+
 class ChatbotService:
-    """Evidence-first chatbot facade over HybridRetriever.
+    """Evidence-first chatbot with optional LLM synthesis and deterministic fallback."""
 
-    This service deliberately does not invent medical answers. It returns short
-    source excerpts and provenance until a separately evaluated answer
-    generation model is configured.
-    """
-
-    def __init__(self, retriever: Retriever, *, result_limit: int = 5):
+    def __init__(
+        self,
+        retriever: Retriever,
+        *,
+        generator: ChatGenerator | None = None,
+        result_limit: int = 5,
+    ):
         if not 1 <= result_limit <= 10:
             raise ValueError("result_limit phải nằm trong khoảng 1..10.")
         self.retriever = retriever
+        self.generator = generator
         self.result_limit = result_limit
 
-    def answer(self, query: str) -> dict[str, Any]:
+    def answer(self, query: str, *, history: list[dict[str, str]] | None = None) -> dict[str, Any]:
         if not isinstance(query, str) or not query.strip():
             return {
-                "status": "needs_clarification",
-                "intent": "empty",
+                "status": "needs_clarification", "intent": "empty",
                 "answer": "Bạn hãy nhập câu hỏi cụ thể để tôi có thể hỗ trợ.",
-                "citations": [],
-                "retrieval": None,
+                "citations": [], "retrieval": None, "generation": "not_used",
                 "clinical_decision": False,
             }
 
         clean_query = query.strip()
         if _is_greeting(clean_query):
             return {
-                "status": "success",
-                "intent": "greeting",
+                "status": "success", "intent": "greeting",
                 "answer": "Xin chào! Tôi có thể hỗ trợ tìm hiểu thông tin về bệnh đái tháo đường dựa trên tài liệu có nguồn dẫn.",
-                "citations": [],
-                "retrieval": None,
+                "citations": [], "retrieval": None, "generation": "not_used",
                 "clinical_decision": False,
             }
 
         if _is_urgent(clean_query):
             return {
-                "status": "urgent",
-                "intent": "medical_urgent",
+                "status": "urgent", "intent": "medical_urgent",
                 "answer": "Các dấu hiệu bạn mô tả có thể cần được xử trí khẩn cấp. Hãy liên hệ cấp cứu hoặc đến cơ sở y tế gần nhất ngay; không chờ câu trả lời từ chatbot.",
-                "citations": [],
-                "retrieval": None,
+                "citations": [], "retrieval": None, "generation": "not_used",
                 "clinical_decision": False,
             }
 
-        if not _is_medical_query(clean_query):
+        if not _is_medical_query(clean_query) and not history:
             return {
-                "status": "out_of_scope",
-                "intent": "general",
+                "status": "out_of_scope", "intent": "general",
                 "answer": "Tôi hiện tập trung hỗ trợ thông tin về bệnh đái tháo đường. Bạn có thể hỏi về triệu chứng, yếu tố nguy cơ, xét nghiệm, biến chứng, dinh dưỡng hoặc theo dõi bệnh.",
-                "citations": [],
-                "retrieval": None,
+                "citations": [], "retrieval": None, "generation": "not_used",
                 "clinical_decision": False,
             }
 
@@ -104,23 +123,20 @@ class ChatbotService:
             result = self.retriever.retrieve(clean_query, limit=self.result_limit)
         except Exception:
             return {
-                "status": "retrieval_unavailable",
-                "intent": "medical_information",
+                "status": "retrieval_unavailable", "intent": "medical_information",
                 "answer": "Hiện không truy xuất được kho tri thức. Vui lòng thử lại sau; tôi không đưa ra câu trả lời y khoa khi chưa lấy được bằng chứng.",
-                "citations": [],
-                "retrieval": None,
+                "citations": [], "retrieval": None, "generation": "not_used",
                 "clinical_decision": False,
             }
 
-        ranked = result.get("results", [])
         citations: list[dict[str, Any]] = []
-        for item in ranked:
-            text = str(item.get("text") or "").strip()
+        for item in result.get("results", []):
+            excerpt = str(item.get("text") or "").strip()
             title = str(item.get("title") or "").strip()
             url = str(item.get("url") or "").strip()
             source = item.get("source") or {}
             source_name = source.get("name") if isinstance(source, dict) else str(source or "")
-            if not text and not (title and url):
+            if not excerpt and not (title and url):
                 continue
             citations.append({
                 "index": len(citations) + 1,
@@ -130,7 +146,7 @@ class ChatbotService:
                 "url": url or None,
                 "page_start": item.get("page_start"),
                 "page_end": item.get("page_end"),
-                "excerpt": text[:700] if text else None,
+                "excerpt": excerpt[:1200] if excerpt else None,
                 "retrieval_methods": item.get("retrieval_methods", []),
             })
             if len(citations) >= self.result_limit:
@@ -138,31 +154,54 @@ class ChatbotService:
 
         if not citations:
             return {
-                "status": "no_evidence",
-                "intent": "medical_information",
+                "status": "no_evidence", "intent": "medical_information",
                 "answer": "Tôi chưa tìm thấy tài liệu phù hợp trong kho tri thức cho câu hỏi này. Tôi không thể kết luận khi chưa có bằng chứng đáng tin cậy.",
-                "citations": [],
-                "retrieval": result.get("retrieval"),
-                "clinical_decision": False,
+                "citations": [], "retrieval": result.get("retrieval"),
+                "generation": "not_used", "clinical_decision": False,
             }
 
-        lines = [
+        fallback = [
             "Tôi tìm thấy các tài liệu có liên quan dưới đây. Đây là thông tin tham khảo được trích từ nguồn, chưa phải kết luận cá nhân hóa:"
         ]
         for citation in citations[:3]:
-            excerpt = citation.get("excerpt")
-            if excerpt:
-                lines.append(f"[{citation['index']}] {excerpt}")
+            if citation.get("excerpt"):
+                fallback.append(f"[{citation['index']}] {citation['excerpt']}")
             else:
-                lines.append(f"[{citation['index']}] {citation['title']}")
-        lines.append(
+                fallback.append(f"[{citation['index']}] {citation['title']}")
+        fallback.append(
             "Thông tin này không thay thế chẩn đoán hoặc tư vấn của nhân viên y tế. Không tự ý thay đổi thuốc hay phác đồ điều trị."
         )
+        answer = "\n\n".join(fallback)
+        generation = "disabled"
+        status = "success"
+
+        if self.generator is not None:
+            evidence = "\n\n".join(
+                f"[{c['index']}] Tiêu đề: {c['title']}\nNguồn: {c.get('source')}\n"
+                f"URL: {c.get('url')}\nTrang: {c.get('page_start')}–{c.get('page_end')}\n"
+                f"Trích đoạn: {c.get('excerpt') or ''}"
+                for c in citations
+            )
+            messages = [{"role": "system", "content": _SYSTEM_PROMPT}]
+            messages.extend(_clean_history(history))
+            messages.append({
+                "role": "user",
+                "content": (
+                    f"CÂU HỎI HIỆN TẠI:\n{clean_query}\n\n"
+                    f"BẰNG CHỨNG ĐƯỢC PHÉP SỬ DỤNG:\n{evidence}\n\n"
+                    "Hãy trả lời chỉ dựa trên bằng chứng trên. Giữ ký hiệu trích dẫn [n]."
+                ),
+            })
+            try:
+                answer = self.generator.generate(messages)
+                generation = "llm"
+            except Exception:
+                generation = "fallback_llm_unavailable"
+                status = "degraded"
+
         return {
-            "status": "success",
-            "intent": "medical_information",
-            "answer": "\n\n".join(lines),
-            "citations": citations,
+            "status": status, "intent": "medical_information",
+            "answer": answer, "citations": citations,
             "retrieval": result.get("retrieval"),
-            "clinical_decision": False,
+            "generation": generation, "clinical_decision": False,
         }
