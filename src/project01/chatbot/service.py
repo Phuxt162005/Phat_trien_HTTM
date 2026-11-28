@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import logging
 import re
 from typing import Any, Protocol
+
+logger = logging.getLogger(__name__)
 
 
 class Retriever(Protocol):
@@ -194,15 +197,26 @@ class ChatbotService:
             })
             try:
                 generated = self.generator.generate(messages)
+            except Exception:
+                logger.exception("LLM generation failed; using evidence-based fallback.")
+                generation = "llm_error"
+                status = "degraded"
+            else:
                 referenced = {int(value) for value in re.findall(r"\[(\d+)\]", generated)}
                 valid_references = {item["index"] for item in citations}
-                if not referenced or referenced - valid_references:
-                    raise ValueError("LLM tạo ký hiệu trích dẫn không tồn tại trong danh sách bằng chứng.")
-                answer = generated
-                generation = "llm"
-            except Exception:
-                generation = "fallback_llm_unavailable"
-                status = "degraded"
+                invalid_references = referenced - valid_references
+                if not referenced or invalid_references:
+                    logger.warning(
+                        "LLM response rejected because citations are missing or invalid "
+                        "(referenced=%s, valid=%s). Using evidence-based fallback.",
+                        sorted(referenced),
+                        sorted(valid_references),
+                    )
+                    generation = "llm_invalid_citations"
+                    status = "degraded"
+                else:
+                    answer = generated
+                    generation = "llm"
 
         return {
             "status": status, "intent": "medical_information",
