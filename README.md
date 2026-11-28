@@ -195,9 +195,37 @@ python scripts/ingest_documents.py data/sources --source-name "WHO" --publisher 
 
 Sau khi kiểm tra JSONL và cấu hình Neo4j, thêm `--neo4j` để lưu provenance/chunks vào graph. Không khai báo license nếu chưa xác minh; dùng `review-required`. Ingestion hiện chưa OCR PDF scan, chưa tải URL, chưa tạo embedding và chưa tự trích xuất facts y khoa.
 
+## Chatbot API và LLM
+
+Chatbot API hiện có tại `app/backend/main.py`:
+- `POST /api/chat`: nhận `query` và tối đa 8 lượt hội thoại gần nhất trong `history`.
+- `GET /health`: báo trạng thái API và cấu hình LLM.
+- Hybrid RAG truy xuất bằng chứng trước; LLM chỉ được gọi sau khi có tài liệu phù hợp.
+- Câu trả lời giữ danh sách citations riêng gồm tiêu đề, nguồn, URL, trích đoạn và số trang.
+- Nếu LLM lỗi, hệ thống quay về câu trả lời trích đoạn có nguồn; nếu truy xuất lỗi/không có bằng chứng thì không gọi LLM.
+- Lịch sử chỉ dùng để hiểu câu hỏi nối tiếp, không được coi là bằng chứng y khoa.
+- Mặc định LLM tắt. Có thể bật Ollama hoặc dịch vụ tương thích OpenAI bằng biến môi trường; không cần thêm thư viện Python bên ngoài.
+
+Cấu hình Ollama trong `.env`:
+```dotenv
+LLM_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434/v1
+OLLAMA_MODEL=<tên-model-chat-đã-cài>
+```
+
+Hoặc dịch vụ OpenAI / OpenAI-compatible:
+```dotenv
+LLM_PROVIDER=openai
+LLM_MODEL=<tên-model>
+LLM_BASE_URL=https://api.openai.com/v1
+LLM_API_KEY=<api-key>
+```
+
+Cài Ollama và tải một chat model phù hợp trên máy trước khi bật provider. Không nhầm embedding model `intfloat/multilingual-e5-small` với chat model: embedding model không sinh câu trả lời hội thoại. Nếu không cấu hình LLM, chatbot vẫn hoạt động ở chế độ trích xuất bằng chứng. Đây là prototype nghiên cứu, chưa được xác nhận lâm sàng.
+
 ## Những phần chưa tích hợp hoàn chỉnh
 
-Ingestion PDF/web, vector retrieval, Hybrid RAG, chatbot, coordinator workflow tích hợp đầy đủ và giao diện chưa được chuyển hoàn chỉnh. Chúng sẽ được triển khai theo từng module sau khi đối chiếu notebook, tài liệu và artifact gốc; không xem việc tạo thư mục là hoàn thành chức năng.
+LLM đã được nối ở mức API tùy chọn, nhưng chưa có giao diện chat, lưu lịch sử hội thoại bền vững, đánh giá chất lượng câu trả lời LLM trên bộ test y khoa, hoặc coordinator workflow tích hợp toàn bộ các Agent. Các phần này chưa được xem là hoàn thành.
 
 ## 1. Chuẩn bị môi trường
 
