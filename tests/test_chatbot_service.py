@@ -174,6 +174,40 @@ def test_llm_invalid_citations_are_rejected_and_fall_back(caplog):
 
 
 
+
+def test_llm_accepts_grouped_citations():
+    response = ChatbotService(
+        FakeRetriever(medical_result()),
+        generator=FakeGenerator("Thông tin thứ nhất [1, 1] và thông tin thứ hai [1]."),
+    ).answer("Bệnh đái tháo đường là gì?")
+    assert response["generation"] == "llm"
+    assert response["status"] == "success"
+
+
+def test_llm_accepts_multiple_separate_citations():
+    result = medical_result()
+    result["results"].append({
+        **result["results"][0],
+        "id": "chunk-2",
+        "title": "Biến chứng của bệnh đái tháo đường",
+    })
+    response = ChatbotService(
+        FakeRetriever(result),
+        generator=FakeGenerator("Có hai nội dung liên quan [1] [2]."),
+    ).answer("Biến chứng bệnh đái tháo đường là gì?")
+    assert response["generation"] == "llm"
+    assert response["status"] == "success"
+
+
+def test_llm_rejects_grouped_citation_with_unknown_index(caplog):
+    response = ChatbotService(
+        FakeRetriever(medical_result()),
+        generator=FakeGenerator("Thông tin tham khảo [1, 9]."),
+    ).answer("Bệnh đái tháo đường là gì?")
+    assert response["status"] == "degraded"
+    assert response["generation"] == "llm_invalid_citations"
+    assert "referenced=[1, 9]" in caplog.text
+
 def test_llm_config_rejects_non_positive_timeout(monkeypatch):
     from project01.chatbot.llm import LLMConfig
     monkeypatch.setenv("LLM_PROVIDER", "ollama")
