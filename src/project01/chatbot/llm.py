@@ -13,9 +13,9 @@ class LLMConfig:
     model: str
     base_url: str
     api_key: str | None = None
-    timeout_seconds: float = 45.0
+    timeout_seconds: float = 120.0
     temperature: float = 0.2
-    max_tokens: int = 900
+    max_tokens: int = 450
 
     @classmethod
     def from_env(cls) -> "LLMConfig | None":
@@ -38,14 +38,23 @@ class LLMConfig:
             raise ValueError("Thiếu LLM_API_KEY cho provider đã chọn.")
         if not base_url.startswith(("http://", "https://")):
             raise ValueError("LLM_BASE_URL/OLLAMA_BASE_URL phải là HTTP(S) URL.")
+        timeout_seconds = float(os.getenv("LLM_TIMEOUT_SECONDS", "120"))
+        temperature = float(os.getenv("LLM_TEMPERATURE", "0.2"))
+        max_tokens = int(os.getenv("LLM_MAX_TOKENS", "450"))
+        if timeout_seconds <= 0:
+            raise ValueError("LLM_TIMEOUT_SECONDS phải lớn hơn 0.")
+        if not 0 <= temperature <= 2:
+            raise ValueError("LLM_TEMPERATURE phải nằm trong khoảng 0..2.")
+        if max_tokens < 1:
+            raise ValueError("LLM_MAX_TOKENS phải lớn hơn 0.")
         return cls(
             provider=provider,
             model=model,
             base_url=base_url.rstrip("/"),
             api_key=api_key,
-            timeout_seconds=float(os.getenv("LLM_TIMEOUT_SECONDS", "45")),
-            temperature=float(os.getenv("LLM_TEMPERATURE", "0.2")),
-            max_tokens=int(os.getenv("LLM_MAX_TOKENS", "900")),
+            timeout_seconds=timeout_seconds,
+            temperature=temperature,
+            max_tokens=max_tokens,
         )
 
 
