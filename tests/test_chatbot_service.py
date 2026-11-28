@@ -114,7 +114,7 @@ def test_llm_failure_falls_back_to_grounded_excerpts():
         generator=FakeGenerator(error=RuntimeError("provider offline")),
     ).answer("Bệnh đái tháo đường là gì?")
     assert response["status"] == "degraded"
-    assert response["generation"] == "fallback_llm_unavailable"
+    assert response["generation"] == "llm_error"
     assert "Đái tháo đường là bệnh" in response["answer"]
     assert response["citations"]
 
@@ -157,3 +157,15 @@ def test_ollama_config_uses_openai_compatible_endpoint(monkeypatch):
     assert config is not None
     assert config.base_url.endswith("/v1")
     assert config.model == "qwen2.5:7b"
+
+
+
+def test_llm_invalid_citations_are_rejected_and_fall_back(caplog):
+    response = ChatbotService(
+        FakeRetriever(medical_result()),
+        generator=FakeGenerator("Câu trả lời không có nguồn [9]."),
+    ).answer("Bệnh đái tháo đường là gì?")
+    assert response["status"] == "degraded"
+    assert response["generation"] == "llm_invalid_citations"
+    assert "Đái tháo đường là bệnh" in response["answer"]
+    assert "citations are missing or invalid" in caplog.text
